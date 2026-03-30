@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 // 2. Route for you to update the code from your website
 app.post('/update', (req, res) => {
     const { code, password } = req.body;
-    if (password !== "YOUR_SECRET_PASSWORD") return res.status(403).send("Wrong Pass");
+    if (password !== "Made by alt") return res.status(403).send("Wrong Pass");
     
     currentCommand = code;
     console.log("New code received: " + code);
