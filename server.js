@@ -1,42 +1,30 @@
-
-
 const express = require('express');
-const axios = require('axios');
 const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// CONFIGURATION
-const UNIVERSE_ID = "YOUR_UNIVERSE_ID"; 
-const WHITELIST = ["YourUser123", "Friend456"]; // Add usernames here
-
 app.use(express.json());
 
-// Serve the website
+let currentCommand = "-- No command set"; // This stores the Lua code in memory
+
+// 1. The Web Interface
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// The Execution Logic
-app.post('/execute', async (req, res) => {
-    const { username, code } = req.body;
-
-    // 1. Whitelist Check
-    if (!WHITELIST.includes(username)) {
-        return res.status(403).send("Unauthorized");
-    }
-
-    // 2. Send to Roblox via MessagingService
-    try {
-        await axios.post(
-            `https://apis.roblox.com/messaging-service/v1/universes/${UNIVERSE_ID}/topics/RemoteExecutor`,
-            { message: code },
-            { headers: { 'x-api-key': process.env.ROBLOX_API_KEY, 'Content-Type': 'application/json' } }
-        );
-        res.status(200).send("Executed");
-    } catch (err) {
-        res.status(500).send("Roblox API Error");
-    }
+// 2. Route for you to update the code from your website
+app.post('/update', (req, res) => {
+    const { code, password } = req.body;
+    if (password !== "YOUR_SECRET_PASSWORD") return res.status(403).send("Wrong Pass");
+    
+    currentCommand = code;
+    console.log("New code received: " + code);
+    res.send("Code Updated");
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// 3. Route for the Roblox game to "fetch" the code
+app.get('/get-command', (req, res) => {
+    res.send(currentCommand);
+});
+
+app.listen(PORT, () => console.log(`Post Office live on port ${PORT}`));
