@@ -10,7 +10,7 @@ let savedLua = "-- No code pushed yet";
 let activeGames = {};
 let systemLogs = [];
 let whitelist = []; // Dynamic list
-const ADMIN_PASSWORD = "YOUR_SECRET_PASSWORD"; // CHANGE THIS
+const ADMIN_PASSWORD = "Alt"; // CHANGE THIS
 
 // --- ROUTES ---
 
