@@ -1,133 +1,50 @@
-report-log' express = require('express');
+const express = require('express');
 const path = require('path');
 const app = express();
-
-// Render uses port 10000 by default, but we use process.env for flexibility
 const PORT = process.env.PORT || 10000;
 
 app.use(express.json());
 
-// --- DATABASE (In-Memory) ---
+// --- DATABASE VARIABLES ---
 let savedLua = "-- No code pushed yet";
-let activeGames = {}; // Stores { JobId: { name: "Game Name", players: 0, lastSeen: Date } }
-
-/nearCATION ---
-// Change this to your desired password!
-const ADMIN_PASSWORD = "Alt";
+let activeGames = {};
+let systemLogs = [];
+const ADMIN_PASSWORD = "Alt"; // CHANGE THIS
 
 // --- ROUTES ---
-// Add this near your other variables (line 10)
-let systemLogs = []; 
-// Send the list of games to your website
-app.get('/get-games', (req, res) => {
-    res.json(activeGames);
-});
 
-// Send the list of logs to your website
-app.get('/get-logs', (req, res) => {
-    res.json(systemLogs);
-});
-// This saves the messages into a list
-let systemLogs = [];
-
-app.post('/report-log', (req, res) => {
-    const { message, gameName } = req.body;
-    const timestamp = new Date().toLocaleTimeString();
-    
-    // Put the newest message at the top
-    systemLogs.unshift(`[${timestamp}] [${gameName}] ${message}`);
-    
-    // Keep only the last 50 messages so the site stays fast
-    if (systemLogs.length > 50) systemLogs.pop();
-    
-    res.sendStatus(200);
-});
-// Add this new route for Roblox to send logs to
-app.post('/report-log', (req, res) => {
-    const { message, gameName } = req.body;
-    consconstestamp = new Date().toLocaleTimeString();
-    
-    // Add new log to the start of the list
-    systemLogs.unshift(`[${timestamp}] [${gameName}] ${message}`);
-    
-    // Keep only the last 50 logs to save memory
-    if (systemLogs.length > 50) systemLogs.pop();
-    
-    res.sendStatus(200);
-});
-
-// Add this route for the Website to get the logs
-app.get('/get-logs', (req, res) => {
-    res.json(systemLogs);
-}); 
-// 1. Serve the Apple-style Website
+// Website UI
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
-async function fetchLogs() {
-    try {
-        const res = await fetch('/get-logs');
-        const logs = await res.json();
-        const consoleBox = document.getElementById('console_output');
-        
-        consoleBox.innerHTML = logs.map(log => `<div class="log-line">${log}</div>`).join('');
-    } catch (e) { console.error("Console sync failed."); }
-}
-setInterval(fetchLogs, 3000); // Refresh every 3 seconds
-// 2. Roblox "Heartbeat" (Roblox calls this every 5-10 seconds)
+
+// Heartbeat (Roblox -> Server)
 app.post('/heartbeat', (req, res) => {
     const { jobId, gameName, playerCount } = req.body;
-    
-    if (!jobId) return res.status(400).send("Missing JobId");
-
-    // Update the game's status in our list
-    activeGames[jobId] = {
-        name: gameName || "Unknown Game",
-        players: playerCount || 0,
-        lastSeen: Date.now()
-    };
-
-    // Send the currently queued Lua code back to the Roblox server
+    if (jobId) {
+        activeGames[jobId] = { name: gameName, players: playerCount, lastSeen: Date.now() };
+    }
     res.send(savedLua);
 });
 
-// 3. Website API: Get List of Active Games
-// This saves the games into a list
-let activeGames = {}; 
-
-app.post('/heartbeat', (req, res) => {
-    const { jobId, gameName, playerCount } = req.body;
-    
-    // Store the game info
-    activeGames[jobId] = {
-        name: gameName || "Unknown Game",
-        players: playerCount || 0,
-        lastSeen: Date.now()
-    };
-
-    // Send back the Lua code you saved in the 'savedLua' variable
-    res.send(savedLua); 
+// Logs (Roblox -> Server)
+app.post('/report-log', (req, res) => {
+    const { message, gameName } = req.body;
+    systemLogs.unshift(`[${new Date().toLocaleTimeString()}] [${gameName}] ${message}`);
+    if (systemLogs.length > 50) systemLogs.pop();
+    res.sendStatus(200);
 });
-// 4. Website API: Push New Lua Code
+
+// Dashboard Data (Website -> Server)
+app.get('/get-games', (req, res) => res.json(activeGames));
+app.get('/get-logs', (req, res) => res.json(systemLogs));
+
+// Push Logic (Website -> Server)
 app.post('/push-lua', (req, res) => {
     const { lua, password } = req.body;
-
-    // Security Check
-    if (password !== ADMIN_PASSWORD) {
-        console.warn(`Unauthorized access attempt with password: ${password}`);
-        return res.status(403).send("Unauthorized");
-    }
-
+    if (password !== ADMIN_PASSWORD) return res.status(403).send("Denied");
     savedLua = lua;
-    console.log("New Payload Queued: " + lua.substring(0, 20) + "...");
-    res.send("Payload Synchronized");
+    res.send("Pushed");
 });
 
-// --- START SERVER ---
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`------------------------------------`);
-    console.log(` Nexus Admin Suite | Online`);
-    console.log(`Port: ${PORT}`);
-    console.log(`Password: ${ADMIN_PASSWORD}`);
-    console.log(`------------------------------------`);
-});
+app.listen(PORT, '0.0.0.0', () => console.log(` Nexus Suite Online on ${PORT}`));
