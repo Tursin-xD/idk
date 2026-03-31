@@ -13,10 +13,30 @@ let activeGames = {}; // Stores { JobId: { name: "Game Name", players: 0, lastSe
 
 // --- AUTHENTICATION ---
 // Change this to your desired password!
-const ADMIN_PASSWORD = "YOUR_SECRET_PASSWORD";
+const ADMIN_PASSWORD = "Alt";
 
 // --- ROUTES ---
+// Add this near your other variables (line 10)
+let systemLogs = []; 
 
+// Add this new route for Roblox to send logs to
+app.post('/report-log', (req, res) => {
+    const { message, gameName } = req.body;
+    const timestamp = new Date().toLocaleTimeString();
+    
+    // Add new log to the start of the list
+    systemLogs.unshift(`[${timestamp}] [${gameName}] ${message}`);
+    
+    // Keep only the last 50 logs to save memory
+    if (systemLogs.length > 50) systemLogs.pop();
+    
+    res.sendStatus(200);
+});
+
+// Add this route for the Website to get the logs
+app.get('/get-logs', (req, res) => {
+    res.json(systemLogs);
+}); 
 // 1. Serve the Apple-style Website
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
