@@ -1,4 +1,4 @@
-const express = require('express');
+report-log' express = require('express');
 const path = require('path');
 const app = express();
 
@@ -11,7 +11,7 @@ app.use(express.json());
 let savedLua = "-- No code pushed yet";
 let activeGames = {}; // Stores { JobId: { name: "Game Name", players: 0, lastSeen: Date } }
 
-// --- AUTHENTICATION ---
+/nearCATION ---
 // Change this to your desired password!
 const ADMIN_PASSWORD = "Alt";
 
@@ -22,7 +22,7 @@ let systemLogs = [];
 // Add this new route for Roblox to send logs to
 app.post('/report-log', (req, res) => {
     const { message, gameName } = req.body;
-    const timestamp = new Date().toLocaleTimeString();
+    consconstestamp = new Date().toLocaleTimeString();
     
     // Add new log to the start of the list
     systemLogs.unshift(`[${timestamp}] [${gameName}] ${message}`);
@@ -41,7 +41,16 @@ app.get('/get-logs', (req, res) => {
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
-
+async function fetchLogs() {
+    try {
+        const res = await fetch('/get-logs');
+        const logs = await res.json();
+        const consoleBox = document.getElementById('console_output');
+        
+        consoleBox.innerHTML = logs.map(log => `<div class="log-line">${log}</div>`).join('');
+    } catch (e) { console.error("Console sync failed."); }
+}
+setInterval(fetchLogs, 3000); // Refresh every 3 seconds
 // 2. Roblox "Heartbeat" (Roblox calls this every 5-10 seconds)
 app.post('/heartbeat', (req, res) => {
     const { jobId, gameName, playerCount } = req.body;
