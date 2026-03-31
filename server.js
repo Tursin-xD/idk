@@ -18,7 +18,30 @@ const ADMIN_PASSWORD = "Alt";
 // --- ROUTES ---
 // Add this near your other variables (line 10)
 let systemLogs = []; 
+// Send the list of games to your website
+app.get('/get-games', (req, res) => {
+    res.json(activeGames);
+});
 
+// Send the list of logs to your website
+app.get('/get-logs', (req, res) => {
+    res.json(systemLogs);
+});
+// This saves the messages into a list
+let systemLogs = [];
+
+app.post('/report-log', (req, res) => {
+    const { message, gameName } = req.body;
+    const timestamp = new Date().toLocaleTimeString();
+    
+    // Put the newest message at the top
+    systemLogs.unshift(`[${timestamp}] [${gameName}] ${message}`);
+    
+    // Keep only the last 50 messages so the site stays fast
+    if (systemLogs.length > 50) systemLogs.pop();
+    
+    res.sendStatus(200);
+});
 // Add this new route for Roblox to send logs to
 app.post('/report-log', (req, res) => {
     const { message, gameName } = req.body;
@@ -69,19 +92,22 @@ app.post('/heartbeat', (req, res) => {
 });
 
 // 3. Website API: Get List of Active Games
-app.get('/get-games', (req, res) => {
-    const now = Date.now();
-    
-    // Cleanup: Remove games that haven't pinged in over 40 seconds
-    for (let id in activeGames) {
-        if (now - activeGames[id].lastSeen > 40000) {
-            delete activeGames[id];
-        }
-    }
-    
-    res.json(activeGames);
-});
+// This saves the games into a list
+let activeGames = {}; 
 
+app.post('/heartbeat', (req, res) => {
+    const { jobId, gameName, playerCount } = req.body;
+    
+    // Store the game info
+    activeGames[jobId] = {
+        name: gameName || "Unknown Game",
+        players: playerCount || 0,
+        lastSeen: Date.now()
+    };
+
+    // Send back the Lua code you saved in the 'savedLua' variable
+    res.send(savedLua); 
+});
 // 4. Website API: Push New Lua Code
 app.post('/push-lua', (req, res) => {
     const { lua, password } = req.body;
