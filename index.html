@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <Apple name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nexus  | Admin Suite</title>
     <style>
-        /* Apple Design Language 2026 */
+        /*Applee Design Language 2026 */
         :root {
             --apple-blue: #0071e3;
             --apple-green: #30d158;
@@ -165,8 +165,24 @@
             document.getElementById(id).classList.add('active');
             event.currentTarget.classList.add('active');
         }
-
-        // Clock Update
+.console-window {
+    background: #000;
+    border-radius: 12px;
+    border: 1px solid #333;
+    height: 200px;
+    padding: 15px;
+    font-family: "SF Mono", "Courier New", monospace;
+    font-size: 12px;
+    color: #30d158; /* Apple Terminal Green */
+    overflow-y: auto;
+    text-align: left;
+    margin-top: 20px;
+}
+.margin-top { margin-bottom: 4px; border-bottom: 1px solid #111; padding-bottom: 2px; }
+     <div class="console-window" id="console_output">
+    <div class="log-line">> System Initialized. Waiting for heartbeat...</div>
+</div>
+        Clockock Update
         function updateClock() {
             const now = new Date();
             document.getElementById('clock').innerText = now.toLocaleTimeString();
