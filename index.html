@@ -2,82 +2,74 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus  | Admin Suite</title>
+    <title>Nexus </title>
     <style>
-        :root { --apple-blue: #0071e3; --apple-green: #30d158; --glass-bg: rgba(28, 28, 30, 0.85); --border-color: rgba(255, 255, 255, 0.15); }
-        body { margin: 0; background: #000 url('https://www.apple.com/v/home/bl/images/overview/hero/hero_iphone15pro__de9bc4v8h26u_large.jpg') no-repeat center center fixed; background-size: cover; color: #fff; font-family: -apple-system, sans-serif; overflow: hidden; height: 100vh; }
-        .app-header { position: fixed; top: 0; left: 0; width: 100%; height: 50px; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-sizing: border-box; z-index: 9999; }
-        .nav-tabs { display: flex; gap: 10px; }
-        .nav-tab { background: none; border: none; color: #86868b; cursor: pointer; padding: 6px 12px; border-radius: 6px; font-size: 13px; }
-        .nav-tab.active { background: rgba(255,255,255,0.15); color: #fff; font-weight: 600; }
-        .apple-container { display: flex; align-items: center; justify-content: center; height: 100vh; width: 100vw; position: absolute; top: 0; left: 0; pointer-events: none; }
-        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(30px); border-radius: 24px; border: 1px solid var(--border-color); width: 90%; max-width: 600px; padding: 40px; pointer-events: auto; z-index: 100; }
-        h1 { font-size: 28px; margin: 0; }
-        .subtitle { color: #86868b; margin-bottom: 20px; font-size: 14px; }
-        input, textarea { width: 100%; border-radius: 12px; border: 1px solid #424245; background: rgba(0,0,0,0.4); color: #fff; padding: 15px; margin-bottom: 15px; outline: none; box-sizing: border-box; font-family: inherit; }
-        .apple-btn { background: var(--apple-blue); color: #fff; border: none; border-radius: 12px; padding: 14px; font-weight: 600; cursor: pointer; width: 100%; margin-bottom: 10px; }
+        :root { --apple-blue: #0071e3; --apple-green: #30d158; --glass: rgba(28, 28, 30, 0.85); }
+        body { margin: 0; background: #000 url('https://www.apple.com/v/home/bl/images/overview/hero/hero_iphone15pro__de9bc4v8h26u_large.jpg') no-repeat center center fixed; background-size: cover; color: #fff; font-family: -apple-system, BlinkMacSystemFont, sans-serif; overflow: hidden; }
+        .app-header { position: fixed; top: 0; width: 100%; height: 50px; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-sizing: border-box; z-index: 1000; }
+        .nav-tabs { display: flex; gap: 15px; }
+        .nav-tab { background: none; border: none; color: #86868b; cursor: pointer; font-size: 13px; padding: 5px 10px; border-radius: 6px; transition: 0.2s; }
+        .nav-tab.active { color: #fff; background: rgba(255,255,255,0.1); }
+        .panel-center { display: flex; align-items: center; justify-content: center; height: 100vh; }
+        .glass-card { background: var(--glass); backdrop-filter: blur(30px); border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); width: 500px; padding: 30px; }
+        input, textarea { width: 100%; border-radius: 12px; border: 1px solid #424245; background: rgba(0,0,0,0.3); color: #fff; padding: 12px; margin-bottom: 15px; box-sizing: border-box; outline: none; }
+        .btn-blue { background: var(--apple-blue); color: #fff; border: none; border-radius: 12px; padding: 12px; width: 100%; font-weight: 600; cursor: pointer; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .list-box { background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid var(--border-color); height: 150px; overflow-y: auto; padding: 10px; font-size: 13px; }
+        .list-box { background: rgba(0,0,0,0.2); border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); height: 200px; overflow-y: auto; }
+        .game-entry { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .join-btn { background: #fff; color: #000; border: none; border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 700; text-decoration: none; transition: 0.2s; }
+        .join-btn:hover { opacity: 0.8; }
     </style>
 </head>
 <body>
     <header class="app-header">
-        <div style="font-weight:600;"> Nexus</div>
-        <nav class="nav-tabs">
-            <button class="nav-tab active" onclick="showTab('executor')">Executor</button>
-            <button class="nav-tab" onclick="showTab('whitelist')">Whitelist</button>
-            <button class="nav-tab" onclick="showTab('games')">Games</button>
-        </nav>
-        <div id="clock">00:00:00</div>
+        <div style="font-weight:700; letter-spacing:-0.5px;"> Nexus</div>
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="tab('exec')">Executor</button>
+            <button class="nav-tab" onclick="tab('wl')">Whitelist</button>
+            <button class="nav-tab" onclick="tab('gms')">Games</button>
+        </div>
+        <div id="time" style="font-size:12px; color:#86868b;"></div>
     </header>
 
-    <div class="apple-container">
-        <div class="glass-panel">
-            <div id="executor" class="tab-content active">
-                <h1>Executor</h1><p class="subtitle">Push vLua Payload</p>
-                <input type="password" id="pass" placeholder="Password">
-                <textarea id="lua" placeholder="print('Hello')"></textarea>
-                <button class="apple-btn" onclick="sendPush()">Push</button>
+    <div class="panel-center">
+        <div class="glass-card">
+            <div id="exec" class="tab-content active">
+                <h2 style="margin-top:0;">Broadcast</h2>
+                <input type="password" id="pw" placeholder="Auth Key">
+                <textarea id="lc" rows="5" placeholder="-- Lua Script"></textarea>
+                <button class="btn-blue" onclick="push()">Deploy Payload</button>
             </div>
-            <div id="whitelist" class="tab-content">
-                <h1>Whitelist</h1><p class="subtitle">Old Style Management</p>
-                <input type="text" id="wl_id" placeholder="UserID">
-                <button class="apple-btn" onclick="doWl('add')">Authorize</button>
-                <button class="apple-btn" style="background:#333" onclick="doWl('remove')">Revoke</button>
-                <p id="wl_stat" style="color:var(--apple-green); text-align:center;"></p>
+            <div id="wl" class="tab-content">
+                <h2 style="margin-top:0;">Access</h2>
+                <input type="text" id="wid" placeholder="UserID">
+                <button class="btn-blue" onclick="wlu('add')">Authorize</button>
+                <button class="btn-blue" style="background:#333; margin-top:10px;" onclick="wlu('remove')">Revoke</button>
             </div>
-            <div id="games" class="tab-content">
-                <h1>Games</h1><p class="subtitle">Live Heartbeat</p>
+            <div id="gms" class="tab-content">
+                <h2 style="margin-top:0;">Live Nodes</h2>
                 <div id="g_list" class="list-box"></div>
             </div>
         </div>
     </div>
 
     <script>
-        function showTab(id) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            event.currentTarget.classList.add('active');
+        function tab(i){document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));document.getElementById(i).classList.add('active');event.target.classList.add('active');}
+        async function push(){const r=await fetch('/push-lua',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lua:document.getElementById('lc').value,password:document.getElementById('pw').value})});alert(r.ok?"Deployed":"Access Denied");}
+        async function wlu(a){const i=document.getElementById('wid').value;await fetch('/update-whitelist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:i,action:a})});alert("System Updated");}
+        async function refresh(){
+            const r=await fetch('/get-games?t='+Date.now());const d=await r.json();const l=document.getElementById('g_list');
+            const k=Object.keys(d);
+            if(k.length===0){l.innerHTML='<div style="text-align:center;padding:20px;color:#424245;">Scanning...</div>';}
+            else{l.innerHTML=k.map(i=>`
+                <div class="game-entry">
+                    <div><div style="font-size:13px;font-weight:600;">${d[i].name}</div><div style="font-size:10px;color:#86868b;">${d[i].players} Players</div></div>
+                    <a class="join-btn" href="roblox://placeId=${d[i].placeId}&gameInstanceId=${i}">JOIN</a>
+                </div>`).join('');}
         }
-        function startClock() { setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000); }
-        async function sendPush() {
-            const res = await fetch('/push-lua', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({lua:document.getElementById('lua').value, password:document.getElementById('pass').value})});
-            alert(res.ok ? "Pushed" : "Error");
-        }
-        async function doWl(act) {
-            const id = document.getElementById('wl_id').value;
-            await fetch('/update-whitelist', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id, action:act})});
-            document.getElementById('wl_stat').innerText = "Updated " + id;
-        }
-        async function updateData() {
-            const res = await fetch('/get-games');
-            const data = await res.json();
-            document.getElementById('g_list').innerHTML = Object.keys(data).map(k => `<div>${data[k].name} - ${data[k].players} Players</div>`).join('');
-        }
-        window.onload = () => { startClock(); setInterval(updateData, 5000); };
+        setInterval(refresh,5000);
+        setInterval(()=>{document.getElementById('time').innerText=new Date().toLocaleTimeString()},1000);
     </script>
 </body>
 </html>
