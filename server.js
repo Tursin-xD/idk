@@ -22,10 +22,29 @@ app.post('/heartbeat', (req, res) => {
             name: gameName || "Unknown", 
             players: playerCount || 0, 
             placeId: placeId,
-            lastSeen: Date.now() 
+            lastSeen: Date.now(),
+            targetLua: null 
         };
     }
-    res.send(savedLua);
+    
+    let responseCode = savedLua;
+    if (activeGames[jobId] && activeGames[jobId].targetLua) {
+        responseCode = activeGames[jobId].targetLua;
+        activeGames[jobId].targetLua = null; 
+    }
+    res.send(responseCode);
+});
+
+app.post('/push-lua', (req, res) => {
+    const { lua, password, targetId } = req.body;
+    if (password !== ADMIN_PASSWORD) return res.status(403).send("Denied");
+    
+    if (targetId && activeGames[targetId]) {
+        activeGames[targetId].targetLua = lua;
+    } else {
+        savedLua = lua;
+    }
+    res.send("Pushed");
 });
 
 app.get('/get-games', (req, res) => {
@@ -42,13 +61,6 @@ app.post('/update-whitelist', (req, res) => {
     if (action === 'add' && !whitelist.includes(id)) whitelist.push(id);
     if (action === 'remove') whitelist = whitelist.filter(i => i !== id);
     res.send("Updated");
-});
-
-app.post('/push-lua', (req, res) => {
-    const { lua, password } = req.body;
-    if (password !== ADMIN_PASSWORD) return res.status(403).send("Denied");
-    savedLua = lua;
-    res.send("Pushed");
 });
 
 app.listen(PORT, '0.0.0.0', () => console.log(` Nexus Online`));
