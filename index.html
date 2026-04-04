@@ -8,25 +8,27 @@
         body { margin: 0; background: #000 url('https://www.apple.com/v/home/bl/images/overview/hero/hero_iphone15pro__de9bc4v8h26u_large.jpg') no-repeat center center fixed; background-size: cover; color: #fff; font-family: -apple-system, BlinkMacSystemFont, sans-serif; overflow: hidden; }
         .app-header { position: fixed; top: 0; width: 100%; height: 50px; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-sizing: border-box; z-index: 1000; }
         .nav-tabs { display: flex; gap: 15px; }
-        .nav-tab { background: none; border: none; color: #86868b; cursor: pointer; font-size: 13px; padding: 5px 10px; border-radius: 6px; transition: 0.2s; }
-        .nav-tab.active { color: #fff; background: rgba(255,255,255,0.1); }
+        .nav-tab { background: none; border: none; color: #86868b; cursor: pointer; font-size: 13px; padding: 5px 10px; border-radius: 6px; }
+        .nav-tab.active { color: #fff; background: rgba(255,255,255,0.1); font-weight: 600; }
         .panel-center { display: flex; align-items: center; justify-content: center; height: 100vh; }
-        .glass-card { background: var(--glass); backdrop-filter: blur(30px); border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); width: 500px; padding: 30px; }
-        input, textarea { width: 100%; border-radius: 12px; border: 1px solid #424245; background: rgba(0,0,0,0.3); color: #fff; padding: 12px; margin-bottom: 15px; box-sizing: border-box; outline: none; }
-        .btn-blue { background: var(--apple-blue); color: #fff; border: none; border-radius: 12px; padding: 12px; width: 100%; font-weight: 600; cursor: pointer; }
+        .glass-card { background: var(--glass); backdrop-filter: blur(30px); border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); width: 500px; padding: 35px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        h2 { margin: 0 0 20px 0; font-size: 24px; letter-spacing: -0.5px; }
+        input, textarea { width: 100%; border-radius: 12px; border: 1px solid #424245; background: rgba(0,0,0,0.4); color: #fff; padding: 14px; margin-bottom: 15px; box-sizing: border-box; outline: none; font-size: 14px; }
+        textarea { font-family: 'Courier New', monospace; resize: none; }
+        .btn-blue { background: var(--apple-blue); color: #fff; border: none; border-radius: 12px; padding: 14px; width: 100%; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-blue:active { transform: scale(0.98); }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .list-box { background: rgba(0,0,0,0.2); border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); height: 200px; overflow-y: auto; }
-        .game-entry { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .join-btn { background: #fff; color: #000; border: none; border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 700; text-decoration: none; transition: 0.2s; }
-        .join-btn:hover { opacity: 0.8; }
+        .list-box { background: rgba(0,0,0,0.2); border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); height: 220px; overflow-y: auto; }
+        .game-entry { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .join-btn { background: #fff; color: #000; border: none; border-radius: 20px; padding: 5px 15px; font-size: 11px; font-weight: 700; text-decoration: none; }
     </style>
 </head>
 <body>
     <header class="app-header">
-        <div style="font-weight:700; letter-spacing:-0.5px;"> Nexus</div>
+        <div style="font-weight:700;"> Nexus</div>
         <div class="nav-tabs">
-            <button class="nav-tab active" onclick="tab('exec')">Executor</button>
+            <button class="nav-tab active" onclick="tab('exec')">Mass Execution</button>
             <button class="nav-tab" onclick="tab('wl')">Whitelist</button>
             <button class="nav-tab" onclick="tab('gms')">Games</button>
         </div>
@@ -36,19 +38,19 @@
     <div class="panel-center">
         <div class="glass-card">
             <div id="exec" class="tab-content active">
-                <h2 style="margin-top:0;">Broadcast</h2>
-                <input type="password" id="pw" placeholder="Auth Key">
-                <textarea id="lc" rows="5" placeholder="-- Lua Script"></textarea>
+                <h2>Mass Execution</h2>
+                <input type="password" id="pw" placeholder="System Password">
+                <textarea id="lc" rows="7" placeholder="-- Enter Lua Code"></textarea>
                 <button class="btn-blue" onclick="push()">Deploy Payload</button>
             </div>
             <div id="wl" class="tab-content">
-                <h2 style="margin-top:0;">Access</h2>
-                <input type="text" id="wid" placeholder="UserID">
-                <button class="btn-blue" onclick="wlu('add')">Authorize</button>
-                <button class="btn-blue" style="background:#333; margin-top:10px;" onclick="wlu('remove')">Revoke</button>
+                <h2>Access Control</h2>
+                <input type="text" id="wid" placeholder="Roblox UserID">
+                <button class="btn-blue" onclick="wlu('add')">Authorize ID</button>
+                <button class="btn-blue" style="background:#222; margin-top:10px;" onclick="wlu('remove')">Revoke ID</button>
             </div>
             <div id="gms" class="tab-content">
-                <h2 style="margin-top:0;">Live Nodes</h2>
+                <h2>Live Nodes</h2>
                 <div id="g_list" class="list-box"></div>
             </div>
         </div>
@@ -56,20 +58,21 @@
 
     <script>
         function tab(i){document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));document.getElementById(i).classList.add('active');event.target.classList.add('active');}
-        async function push(){const r=await fetch('/push-lua',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lua:document.getElementById('lc').value,password:document.getElementById('pw').value})});alert(r.ok?"Deployed":"Access Denied");}
-        async function wlu(a){const i=document.getElementById('wid').value;await fetch('/update-whitelist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:i,action:a})});alert("System Updated");}
+        async function push(){const r=await fetch('/push-lua',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lua:document.getElementById('lc').value,password:document.getElementById('pw').value})});alert(r.ok?"✓ Deployed":"✕ Denied");}
+        async function wlu(a){const i=document.getElementById('wid').value;await fetch('/update-whitelist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:i,action:a})});alert("Updated");}
         async function refresh(){
             const r=await fetch('/get-games?t='+Date.now());const d=await r.json();const l=document.getElementById('g_list');
             const k=Object.keys(d);
-            if(k.length===0){l.innerHTML='<div style="text-align:center;padding:20px;color:#424245;">Scanning...</div>';}
+            if(k.length===0){l.innerHTML='<div style="text-align:center;padding:40px;color:#424245;font-size:13px;">No Servers Active</div>';}
             else{l.innerHTML=k.map(i=>`
                 <div class="game-entry">
-                    <div><div style="font-size:13px;font-weight:600;">${d[i].name}</div><div style="font-size:10px;color:#86868b;">${d[i].players} Players</div></div>
+                    <div><div style="font-size:14px;font-weight:600;">${d[i].name}</div><div style="font-size:11px;color:#86868b;">${d[i].players} Players Online</div></div>
                     <a class="join-btn" href="roblox://placeId=${d[i].placeId}&gameInstanceId=${i}">JOIN</a>
                 </div>`).join('');}
         }
         setInterval(refresh,5000);
         setInterval(()=>{document.getElementById('time').innerText=new Date().toLocaleTimeString()},1000);
+        window.onload = refresh;
     </script>
 </body>
 </html>
