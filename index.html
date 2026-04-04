@@ -10,15 +10,16 @@
         .nav-tab { background: none; border: none; color: #86868b; cursor: pointer; font-size: 12px; padding: 6px 10px; border-radius: 6px; }
         .nav-tab.active { color: #fff; background: rgba(255,255,255,0.1); font-weight: 600; }
         .panel-center { display: flex; align-items: center; justify-content: center; height: 100vh; }
-        .glass-card { background: var(--glass); backdrop-filter: blur(30px); border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); width: 500px; padding: 30px; }
+        .glass-card { background: var(--glass); backdrop-filter: blur(30px); border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); width: 520px; padding: 30px; }
         input, textarea, select { width: 100%; border-radius: 10px; border: 1px solid #424245; background: rgba(0,0,0,0.4); color: #fff; padding: 12px; margin-bottom: 12px; box-sizing: border-box; outline: none; }
         .btn-blue { background: var(--apple-blue); color: #fff; border: none; border-radius: 10px; padding: 12px; width: 100%; font-weight: 600; cursor: pointer; }
         .rh-btn { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 10px; cursor: pointer; margin-bottom: 10px; margin-right: 5px; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .list-box { background: rgba(0,0,0,0.2); border-radius: 12px; height: 200px; overflow-y: auto; }
-        .game-entry { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .list-box { background: rgba(0,0,0,0.2); border-radius: 12px; height: 220px; overflow-y: auto; }
+        .game-entry { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .join-btn { background: #fff; color: #000; border-radius: 20px; padding: 4px 12px; font-size: 10px; font-weight: 700; text-decoration: none; }
+        .id-text { font-family: monospace; font-size: 9px; color: #636366; display: block; margin-top: 2px; }
     </style>
 </head>
 <body>
@@ -63,7 +64,7 @@
                 <button class="btn-blue" style="background:#222; margin-top:8px;" onclick="wlu('remove')">Revoke</button>
             </div>
             <div id="gms" class="tab-content">
-                <h2>Games</h2><div id="g_list" class="list-box"></div>
+                <h2>Games & Nodes</h2><div id="g_list" class="list-box"></div>
             </div>
         </div>
     </div>
@@ -88,9 +89,17 @@
             const r=await fetch('/get-games?t='+Date.now());const d=await r.json();
             const l=document.getElementById('g_list');const sel=document.getElementById('target_id');
             const k=Object.keys(d);
-            sel.innerHTML = k.map(i=>`<option value="${i}">${d[i].name}</option>`).join('');
-            if(k.length===0){l.innerHTML='<div style="text-align:center;padding:40px;color:#424245;">No Nodes Found</div>';}
-            else{l.innerHTML=k.map(i=>`<div class="game-entry"><div><div style="font-size:13px;font-weight:600;">${d[i].name}</div><div style="font-size:10px;color:#86868b;">${d[i].players} P</div></div><a class="join-btn" href="roblox://placeId=${d[i].placeId}&gameInstanceId=${i}">JOIN</a></div>`).join('');}
+            sel.innerHTML = k.map(i=>`<option value="${i}">${d[i].name} (${i.substring(0,8)}...)</option>`).join('');
+            if(k.length===0){l.innerHTML='<div style="text-align:center;padding:40px;color:#424245;">No Active Nodes</div>';}
+            else{l.innerHTML=k.map(i=>`
+                <div class="game-entry">
+                    <div style="max-width: 70%;">
+                        <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d[i].name}</div>
+                        <span class="id-text">${i}</span>
+                        <div style="font-size:10px;color:#86868b;margin-top:2px;">${d[i].players} Players Online</div>
+                    </div>
+                    <a class="join-btn" href="roblox://placeId=${d[i].placeId}&gameInstanceId=${i}">JOIN</a>
+                </div>`).join('');}
         }
         setInterval(refresh,5000);
         setInterval(()=>{document.getElementById('time').innerText=new Date().toLocaleTimeString()},1000);
