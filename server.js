@@ -14,13 +14,11 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.post('/', (req, res) => {
+app.post('/heartbeat', (req, res) => {
     const { jobId, gameName, playerCount, userId } = req.body;
-
     if (userId && whitelist.length > 0 && !whitelist.includes(userId.toString())) {
         return res.send("-- Not Whitelisted: Ignoring");
     }
-
     if (jobId) {
         activeGames[jobId] = { 
             name: gameName || "Unknown", 
@@ -28,7 +26,6 @@ app.post('/', (req, res) => {
             lastSeen: Date.now() 
         };
     }
-    
     res.send(savedLua);
 });
 
@@ -47,9 +44,10 @@ app.post('/push-lua', (req, res) => {
 });
 
 app.get('/get-games', (req, res) => {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     const now = Date.now();
     for (const id in activeGames) {
-        if (now - activeGames[id].lastSeen > 20000) delete activeGames[id];
+        if (now - activeGames[id].lastSeen > 30000) delete activeGames[id];
     }
     res.json(activeGames);
 });
