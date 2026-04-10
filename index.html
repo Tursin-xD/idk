@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nexus  | Auto-Target</title>
+    <title>Nexus  | RequireHub</title>
     <style>
         :root { --apple-blue: #0071e3; --bg: #000; }
         body { margin: 0; background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; overflow: hidden; }
@@ -15,15 +15,16 @@
         h2 { margin: 0 0 12px 0; font-size: 18px; }
         input, textarea, select { width: 100%; border-radius: 8px; border: 1px solid #424245; background: #000; color: #fff; padding: 10px; margin-bottom: 10px; box-sizing: border-box; outline: none; font-size: 12px; }
         textarea { font-family: 'Courier New', monospace; resize: none; }
-        .btn-main { background: var(--apple-blue); color: #fff; border: none; border-radius: 8px; padding: 12px; width: 100%; font-weight: 600; cursor: pointer; margin-top: 5px; }
+        .btn-main { background: var(--apple-blue); color: #fff; border: none; border-radius: 8px; padding: 12px; width: 100%; font-weight: 600; cursor: pointer; }
         .row-btns { display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap; }
         .rh-pill { background: #333; color: #fff; border: none; padding: 4px 10px; border-radius: 12px; font-size: 9px; cursor: pointer; transition: 0.1s; }
+        .rh-pill:hover { background: #0071e3; }
         .node-box { background: #0b0b0c; border-radius: 10px; height: 160px; overflow-y: auto; border: 1px solid #333; }
         .music-ctrl { position: fixed; bottom: 20px; left: 20px; background: rgba(44,44,46,0.8); backdrop-filter: blur(10px); padding: 8px 15px; border-radius: 20px; border: 1px solid #444; display: flex; align-items: center; gap: 10px; z-index: 2000; }
     </style>
 </head>
 <body onclick="startAudio()">
-    <audio id="bgMusic" loop src="https://cdn.discordapp.com/attachments/1459510270870421546/1489905086250352772/Wont_Stop_Us_-_StacyBurke92_g00byd0lan_KLICKAUD.mp3?ex=69d21dbd&is=69d0cc3d&hm=f7812e208edafbe0c5f70e2359dc893b9c6477033ae2989720e977ab36a15b8a&"></audio>
+    <audio id="bgMusic" loop src="https://cdn.discordapp.com/attachments/1459510270870421546/1492178549317308426/Wont_Stop_Us_-_StacyBurke92_g00byd0lan_KLICKAUD.mp3?ex=69da6311&is=69d91191&hm=f174788afceacbba804576a6c0e91386a5e3a077bacbedbc981032a8ec393a1c&"></audio>
 
     <div class="header">
         <div style="font-weight:700;"> NEXUS</div>
@@ -46,6 +47,7 @@
                     <button class="rh-pill" onclick="fillRH(3, 'm_lua')">Darius (OP)</button>
                     <button class="rh-pill" onclick="fillRH('R6', 'm_lua')" style="background:#555">R6</button>
                     <button class="rh-pill" onclick="fillRH('DS', 'm_lua')" style="background:#555">DarkSynapse</button>
+                    <button class="rh-pill" onclick="fillRH('Steve', 'm_lua')" style="background:var(--apple-blue)">Steve</button>
                 </div>
                 <input type="password" id="m_pw" placeholder="Admin Password">
                 <textarea id="m_lua" rows="6" placeholder="-- Global Lua"></textarea>
@@ -62,6 +64,7 @@
                     <button class="rh-pill" onclick="fillRH(3, 's_lua')">Darius (OP)</button>
                     <button class="rh-pill" onclick="fillRH('R6', 's_lua')">R6</button>
                     <button class="rh-pill" onclick="fillRH('DS', 's_lua')">DarkSynapse</button>
+                    <button class="rh-pill" onclick="fillRH('Steve', 's_lua')" style="background:var(--apple-blue)">Steve</button>
                 </div>
                 <input type="password" id="s_pw" placeholder="Admin Password">
                 <textarea id="s_lua" rows="5" placeholder="-- Target Lua"></textarea>
@@ -77,7 +80,7 @@
             <div id="wl" class="tab-content" style="display:none;">
                 <h2>Whitelist Manager</h2>
                 <input type="text" id="wid" placeholder="Roblox Full Username">
-                <button class="btn-main" onclick="alert('Target Name Locked')">Save User</button>
+                <button class="btn-main" onclick="alert('User Settings Updated')">Save User</button>
             </div>
 
             <div id="nodes" class="tab-content" style="display:none;">
@@ -87,17 +90,10 @@
         </div>
     </div>
 
-    <div class="music-ctrl">
-        <button id="pBtn" style="background:#fff; border:none; border-radius:15px; font-size:10px; font-weight:bold; cursor:pointer; padding:5px 10px;" onclick="toggle()">PAUSE</button>
-    </div>
-
     <script>
         const audio = document.getElementById('bgMusic');
         let currentNodes = {};
-
         function startAudio() { audio.play().catch(()=>{}); }
-        function toggle() { if(audio.paused) { audio.play(); document.getElementById('pBtn').innerText="PAUSE"; } else { audio.pause(); document.getElementById('pBtn').innerText="PLAY"; } }
-
         function showTab(id) {
             document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -113,16 +109,15 @@
             if(type === 3) box.value = `require(127445614272366).op("${user}")`;
             if(type === 'R6') box.value = `require(3436957371):r6("${user}")`;
             if(type === 'DS') box.value = `require(133245855072069)("${user}", "DarkSynapse")`;
+            if(type === 'Steve') box.value = `require(12246001294):Blockify("${user}")`;
         }
 
         async function findPlayer() {
             const searchName = document.getElementById('wid').value.toLowerCase();
             if(!searchName) return alert("Enter name in Whitelist tab first!");
-            
             let found = false;
             for (const jobId in currentNodes) {
                 const node = currentNodes[jobId];
-                // Checks if player name exists in the node's player list sent by the server
                 if (node.players && node.players.some(p => p.toLowerCase() === searchName)) {
                     document.getElementById('target_id').value = jobId;
                     alert("Player Found! Server Selected.");
@@ -135,11 +130,9 @@
 
         async function send(tabId) {
             const lua = document.querySelector(`#${tabId} textarea`).value;
-            const pw = document.querySelector(`#${tabId} input`)?.value || "Alt";
             const tid = tabId === 'single' ? document.getElementById('target_id').value : null;
-            if (tabId === 'single' && !tid) return alert("Select a target node first!");
-            await fetch('/push-lua', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({lua, password:pw, targetId:tid})});
-            alert("Payload Sent");
+            await fetch('/push-lua', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({lua, password:"Alt", targetId:tid})});
+            alert("Sent");
         }
 
         async function update() {
@@ -147,11 +140,7 @@
                 const res = await fetch('/get-games');
                 currentNodes = await res.json();
                 const keys = Object.keys(currentNodes);
-                document.getElementById('node_list').innerHTML = keys.map(k => `
-                    <div style="padding:10px; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center;">
-                        <div><b>${currentNodes[k].name}</b><br><small style="color:#666; font-size:9px;">${k}</small></div>
-                        <a href="roblox://placeId=${currentNodes[k].placeId}&gameInstanceId=${k}" style="background:#fff; color:#000; text-decoration:none; font-size:10px; font-weight:bold; padding:4px 8px; border-radius:10px;">JOIN</a>
-                    </div>`).join('') || '<div style="padding:20px; text-align:center;">No Servers</div>';
+                document.getElementById('node_list').innerHTML = keys.map(k => `<div style="padding:10px; border-bottom:1px solid #333;"><b>${currentNodes[k].name}</b><br><small>${k}</small></div>`).join('') || '<div style="padding:20px; text-align:center;">No Servers</div>';
                 document.getElementById('target_id').innerHTML = keys.map(k => `<option value="${k}">${currentNodes[k].name}</option>`).join('') || '<option value="">No Servers</option>';
             } catch(e) {}
         }
