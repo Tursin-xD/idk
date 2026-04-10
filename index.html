@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nexus  | Smart Target</title>
+    <title>Nexus  | Final Build</title>
     <style>
         :root { --apple-blue: #0071e3; --bg: #000; }
         body { margin: 0; background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; overflow: hidden; }
@@ -64,15 +64,16 @@
                     <button class="rh-pill" onclick="fillRH('DS', 's_lua')">DarkSynapse</button>
                     <button class="rh-pill" onclick="fillRH('Steve', 's_lua')">Steve</button>
                 </div>
-                <select id="target_id" disabled><option value="">Waiting for Player...</option></select>
+                <select id="target_id" disabled><option value="">Scanning...</option></select>
                 <textarea id="s_lua" rows="5" placeholder="-- Target Lua"></textarea>
                 <button class="btn-main" onclick="send('single')">Execute Target</button>
             </div>
 
             <div id="wl" class="tab-content" style="display:none;">
                 <h2>Whitelist</h2>
-                <input type="text" id="wid" placeholder="Enter Full Roblox Username" oninput="autoScan()">
-                <p style="font-size: 10px; color: #666;">System will auto-scan all nodes for this name.</p>
+                <input type="text" id="wid" placeholder="Enter Full Roblox Username">
+                <button class="btn-main" onclick="saveWl()">Save & Start Scanning</button>
+                <p id="save-msg" style="font-size: 10px; color: #34c759; margin-top: 5px; display: none;">Username saved! Scanning nodes...</p>
             </div>
 
             <div id="inf" class="tab-content" style="display:none;">
@@ -109,6 +110,12 @@
             document.getElementById('btn-' + id).classList.add('active');
         }
 
+        function saveWl() {
+            document.getElementById('save-msg').style.display = 'block';
+            autoScan();
+            setTimeout(() => { document.getElementById('save-msg').style.display = 'none'; }, 2000);
+        }
+
         function fillRH(type, boxId) {
             const user = document.getElementById('wid').value || "Player";
             const box = document.getElementById(boxId);
@@ -124,7 +131,7 @@
             const name = document.getElementById('wid').value.toLowerCase();
             const status = document.getElementById('target-status');
             const select = document.getElementById('target_id');
-            if(!name) { status.innerText = "Enter username in Whitelist"; return; }
+            if(!name) return;
 
             detectedJobId = null;
             for (let k in currentNodes) {
@@ -157,9 +164,9 @@
             try {
                 const res = await fetch('/get-games');
                 currentNodes = await res.json();
-                autoScan(); // Runs every 5 seconds to find you
+                autoScan();
                 const keys = Object.keys(currentNodes);
-                document.getElementById('node_list').innerHTML = keys.map(k => `<div style="padding:10px; border-bottom:1px solid #333;"><b>${currentNodes[k].name}</b></div>`).join('') || '<div style="padding:20px; text-align:center;">No Nodes Found</div>';
+                document.getElementById('node_list').innerHTML = keys.map(k => `<div style="padding:10px; border-bottom:1px solid #333;"><b>${currentNodes[k].name}</b></div>`).join('') || '<div style="padding:20px; text-align:center;">No Nodes</div>';
             } catch(e) {}
         }
 
