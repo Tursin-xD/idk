@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nexus  | Legacy Expanded</title>
+    <title>Nexus  | Legacy v2.6</title>
     <style>
         body { margin: 0; background: #000; color: #fff; font-family: -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
         .panel { background: #1c1c1e; padding: 30px; border-radius: 18px; width: 550px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -23,7 +23,7 @@
         .f-btn { background: #2c2c2e; border: none; color: #fff; padding: 8px 16px; border-radius: 10px; font-size: 12px; cursor: pointer; }
     </style>
 </head>
-<body>
+<body onclick="initAudio()">
 
     <div class="panel">
         <div class="tabs">
@@ -38,10 +38,10 @@
         <div id="mass" class="content-section active">
             <h2>Mass Execution</h2>
             <div class="btn-group">
-                <button class="pill" onclick="setLua('LR', 'lua_mass')">Last Rig</button>
                 <button class="pill" onclick="setLua('Darius', 'lua_mass')">Darius</button>
                 <button class="pill" onclick="setLua('Steve', 'lua_mass')">Steve</button>
                 <button class="pill" onclick="setLua('DS', 'lua_mass')">DarkSynapse</button>
+                <button class="pill" onclick="setLua('LR', 'lua_mass')">Last Rig</button>
                 <button class="pill" onclick="setLua('EXE', 'lua_mass')">Require.EXE</button>
             </div>
             <textarea id="lua_mass" rows="6" placeholder="-- Global Lua"></textarea>
@@ -53,6 +53,7 @@
             <div class="btn-group">
                 <button class="pill" onclick="setLua('Darius', 'lua_single')">Darius</button>
                 <button class="pill" onclick="setLua('Steve', 'lua_single')">Steve</button>
+                <button class="pill" onclick="setLua('DS', 'lua_single')">DarkSynapse</button>
             </div>
             <input type="text" id="job_id" placeholder="Paste JobID Manually">
             <textarea id="lua_single" rows="5" placeholder="-- Target Lua"></textarea>
@@ -67,19 +68,36 @@
 
         <div id="nodes" class="content-section">
             <h2>Active Nodes</h2>
-            <div id="node_display" class="node-list">Scanning for active servers...</div>
+            <div id="node_display" class="node-list">Scanning...</div>
             <button class="exec-btn" style="background:#333; margin-top:10px;" onclick="refreshNodes()">Refresh Nodes</button>
         </div>
     </div>
 
     <div class="footer-btns">
-        <button class="f-btn" onclick="document.getElementById('m').play()">PLAY</button>
-        <button class="f-btn" style="color: #ff3b30;" onclick="document.getElementById('m').pause()">STOP</button>
+        <button class="f-btn" onclick="toggleAudio()">PLAY/PAUSE</button>
+        <button class="f-btn" style="color: #ff3b30;" onclick="stopAudio()">STOP</button>
     </div>
 
-    <audio id="m" loop src="https://cdn.discordapp.com/attachments/1459510270870421546/1492178549317308426/Wont_Stop_Us_-_StacyBurke92_g00byd0lan_KLICKAUD.mp3?ex=69da6311&is=69d91191&hm=f174788afceacbba804576a6c0e91386a5e3a077bacbedbc981032a8ec393a1c&"></audio>
+    <audio id="m" loop preload="auto">
+        <source src="https://files.catbox.moe/81p5wf.mp3" type="audio/mpeg">
+    </audio>
 
     <script>
+        const audio = document.getElementById('m');
+
+        function initAudio() {
+            if(audio.paused) audio.play().catch(() => {});
+        }
+
+        function toggleAudio() {
+            audio.paused ? audio.play() : audio.pause();
+        }
+
+        function stopAudio() {
+            audio.pause();
+            audio.currentTime = 0;
+        }
+
         function openTab(evt, tabName) {
             var i, content, tabs;
             content = document.getElementsByClassName("content-section");
@@ -103,7 +121,6 @@
         async function fire(mode) {
             let code = "";
             let tid = null;
-
             if(mode === 'mass') code = document.getElementById('lua_mass').value;
             if(mode === 'single') {
                 code = document.getElementById('lua_single').value;
@@ -121,10 +138,10 @@
                         targetId: tid
                     })
                 });
-                if(res.ok) alert("Dispatched!");
-                else alert("Server Error (Alt Password Failed)");
+                if(res.ok) alert("GET Request Successful - Payload Pushed.");
+                else alert("Execution Failed.");
             } catch(e) {
-                alert("Connection Failed. Is Render Awake?");
+                alert("Render Connection Error.");
             }
         }
 
@@ -133,10 +150,9 @@
                 const res = await fetch('/get-games');
                 const data = await res.json();
                 const display = document.getElementById('node_display');
-                display.innerHTML = Object.keys(data).map(k => `<div><b>${data[k].name || 'Node'}</b><br><small style="color:#0071e3">${k}</small></div><hr style="border:0;border-top:1px solid #333">`).join('') || "No nodes found.";
+                display.innerHTML = Object.keys(data).map(k => `<div><b>${data[k].name || 'Node'}</b><br><small style="color:#0071e3">${k}</small></div><hr style="border:0;border-top:1px solid #333">`).join('') || "No active nodes.";
             } catch(e) {}
         }
-
         setInterval(refreshNodes, 5000);
     </script>
 </body>
