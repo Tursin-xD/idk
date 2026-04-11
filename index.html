@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nexus  | Final Legacy v3.7</title>
+    <title>Nexus  | Final Legacy v3.8</title>
+    
+    <link rel="icon" type="image/png" href="blob:https://gemini.google.com/63b1b8fc-75ea-484e-a223-a2d8268d8e9f">
+    
     <style>
         body { margin: 0; background: #000; color: #fff; font-family: -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
         .panel { background: #1c1c1e; padding: 25px; border-radius: 18px; width: 600px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -144,7 +147,6 @@
 
                 for (let id in nodes) {
                     const players = nodes[id].players;
-                    // Support both list of names and just a number
                     if (Array.isArray(players)) {
                         if (players.some(p => p.toLowerCase() === name.toLowerCase())) {
                             status.innerText = `MATCH: Found ${name}! Pushing...`;
@@ -157,7 +159,7 @@
                 }
                 if(!found) {
                     status.innerText = "Target not found.";
-                    alert("Player not found in name lists.");
+                    alert("Player not found.");
                 }
             } catch(e) { status.innerText = "Error fetching nodes."; }
         }
@@ -204,7 +206,6 @@
                 
                 document.getElementById('node_log').innerHTML = Object.keys(data).map(k => {
                     const game = data[k];
-                    // FIX: Handle cases where "players" is a number or an array
                     const count = Array.isArray(game.players) ? game.players.length : (game.players || 0);
                     return `<div><b>${game.name || "Game"}</b> (${count} players)</div>`;
                 }).join('<hr style="border:0;border-top:1px solid #333">');
