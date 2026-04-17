@@ -2,23 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nexus  | Stable v4.8</title>
+    <title>Nexus  | Stable v4.9</title>
     <link rel="icon" type="image/jpeg" href="https://files.catbox.moe/8bf557.jpg">
     <style>
         body { margin: 0; background: #000; color: #fff; font-family: -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-        .panel { background: #1c1c1e; padding: 25px; border-radius: 18px; width: 600px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; flex-wrap: wrap; }
-        .tab { color: #86868b; cursor: pointer; font-size: 11px; font-weight: 600; transition: 0.2s; position: relative; text-transform: uppercase; }
+        .panel { background: #1c1c1e; padding: 25px; border-radius: 18px; width: 620px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; flex-wrap: wrap; }
+        .tab { color: #86868b; cursor: pointer; font-size: 10px; font-weight: 600; transition: 0.2s; position: relative; text-transform: uppercase; }
         .tab.active { color: #fff; }
         .tab.active::after { content: ''; position: absolute; bottom: -11px; left: 0; width: 100%; height: 2px; background: #0071e3; }
         .content-section { display: none; }
         .content-section.active { display: block; }
-        h2 { margin-top: 0; font-size: 14px; text-align: center; margin-bottom: 15px; color: #0071e3; text-transform: uppercase; }
+        h2 { margin-top: 0; font-size: 13px; text-align: center; margin-bottom: 15px; color: #0071e3; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-group { display: flex; gap: 5px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center; }
+        .pill { background: #3a3a3c; border: none; color: #fff; padding: 6px 10px; border-radius: 20px; font-size: 9px; cursor: pointer; }
+        .pill:hover { background: #0071e3; }
         textarea, input { width: 100%; background: #000; border: 1px solid #424245; border-radius: 10px; color: #fff; padding: 12px; margin-bottom: 10px; box-sizing: border-box; font-family: monospace; outline: none; font-size: 12px; }
-        .exec-btn { background: #0071e3; color: #fff; border: none; width: 100%; padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 14px; margin-top: 5px; }
-        .node-list { background: #000; border: 1px solid #333; border-radius: 10px; height: 140px; overflow-y: auto; padding: 10px; font-size: 11px; }
-        .node-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #222; }
-        .mini-join { background: #34c759; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 10px; cursor: pointer; font-weight: bold; }
+        .exec-btn { background: #0071e3; color: #fff; border: none; width: 100%; padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 13px; margin-top: 5px; }
+        .node-list { background: #000; border: 1px solid #333; border-radius: 10px; height: 130px; overflow-y: auto; padding: 10px; font-size: 11px; }
+        .node-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #222; }
+        .mini-join { background: #34c759; color: #fff; border: none; padding: 5px 10px; border-radius: 6px; font-size: 9px; cursor: pointer; font-weight: bold; }
         #scan-status { color: #ff9500; font-size: 10px; text-align: center; margin-top: 5px; font-weight: bold; min-height: 12px; font-family: monospace; }
         .footer-btns { position: fixed; bottom: 20px; left: 20px; display: flex; gap: 10px; }
         .f-btn { background: #2c2c2e; border: none; color: #fff; padding: 8px 16px; border-radius: 10px; font-size: 12px; cursor: pointer; }
@@ -30,28 +33,52 @@
         <div class="tabs">
             <span class="tab active" onclick="openTab(event, 'single')">Search</span>
             <span class="tab" onclick="openTab(event, 'mass')">Mass</span>
+            <span class="tab" onclick="openTab(event, 'hub')">Hub</span>
+            <span class="tab" onclick="openTab(event, 'whitelist')">Whitelist</span>
             <span class="tab" onclick="openTab(event, 'nodes')">Nodes</span>
         </div>
 
         <input type="text" id="target_input" value="altofTursin198u_hi" placeholder="Target Username">
 
         <div id="single" class="content-section active">
-            <h2>Deep Target Search</h2>
-            <textarea id="lua_single" rows="6" placeholder="-- Script for target"></textarea>
-            <button class="exec-btn" onclick="findAndExecute()">Deep Scan & Execute</button>
-            <div id="scan-status">Debug Log: Awaiting Search...</div>
+            <h2>Target Search & Execute</h2>
+            <textarea id="lua_single" rows="5" placeholder="-- Script for target"></textarea>
+            <button class="exec-btn" onclick="findAndExecute()">Scan & Execute</button>
+            <div id="scan-status">Awaiting input...</div>
         </div>
 
         <div id="mass" class="content-section">
             <h2>Global Dispatch</h2>
-            <textarea id="lua_mass" rows="6" placeholder="-- Script for all servers"></textarea>
+            <textarea id="lua_mass" rows="5" placeholder="-- Script for all servers"></textarea>
             <button class="exec-btn" onclick="fire('mass')">Execute All Servers</button>
+        </div>
+
+        <div id="hub" class="content-section">
+            <h2>Script Hub</h2>
+            <div class="btn-group">
+                <button class="pill" onclick="quickLoad('Darius')">Darius</button>
+                <button class="pill" onclick="quickLoad('Steve')">Steve</button>
+                <button class="pill" onclick="quickLoad('LR')">Last Rig</button>
+                <button class="pill" onclick="quickLoad('EXE')">EXE</button>
+            </div>
+            <textarea id="lua_hub" rows="4" placeholder="Select a script..."></textarea>
+            <button class="exec-btn" style="background:#5856d6;" onclick="fire('hub')">Execute Globally</button>
+        </div>
+
+        <div id="whitelist" class="content-section">
+            <h2>Auto-Monitor</h2>
+            <div id="white_list_display" class="node-list" style="height: 60px; margin-bottom: 10px;">Watching: altofTursin198u_hi</div>
+            <div class="btn-group">
+                <button class="pill" onclick="addToWhitelist()">Add Target</button>
+                <button class="pill" style="background:#ff3b30;" onclick="clearWhitelist()">Clear List</button>
+            </div>
+            <p style="font-size: 9px; color: #86868b; text-align: center;">Scans automatically every 10s.</p>
         </div>
 
         <div id="nodes" class="content-section">
             <h2>Active Nodes</h2>
             <div id="node_log" class="node-list">Scanning...</div>
-            <button class="exec-btn" style="background:#333; margin-top:10px;" onclick="refreshNodes()">Refresh Nodes</button>
+            <button class="exec-btn" style="background:#333; margin-top:10px;" onclick="refreshNodes()">Refresh</button>
         </div>
     </div>
 
@@ -64,6 +91,8 @@
 
     <script>
         const audio = document.getElementById('m');
+        let watchList = ['altofTursin198u_hi'];
+
         function stopAudio() { audio.pause(); audio.currentTime = 0; }
 
         function openTab(evt, tabName) {
@@ -73,6 +102,15 @@
             for (let i = 0; i < tabs.length; i++) { tabs[i].className = tabs[i].className.replace(" active", ""); }
             document.getElementById(tabName).style.display = "block";
             evt.currentTarget.className += " active";
+        }
+
+        function quickLoad(type) {
+            const user = document.getElementById('target_input').value || "Player";
+            const box = document.getElementById('lua_hub');
+            if(type === 'Darius') box.value = `require(127445614272366).op("${user}")`;
+            if(type === 'Steve') box.value = `require(12246001294):Blockify("${user}")`;
+            if(type === 'LR') box.value = `require(132155655397653)("${user}")`;
+            if(type === 'EXE') box.value = `require(125992639027440)["Require.EXE by E God"]("${user}")`;
         }
 
         async function push(luaCode, tid) {
@@ -87,44 +125,55 @@
             const nameInput = document.getElementById('target_input').value.trim().toLowerCase();
             const lua = document.getElementById('lua_single').value;
             const status = document.getElementById('scan-status');
-            
-            status.innerText = "DEBUG: Fetching game data...";
+            status.innerText = "Deep Scanning Nodes...";
 
             try {
                 const res = await fetch('/get-games');
                 const nodes = await res.json();
-                const nodeKeys = Object.keys(nodes);
-                
-                if (nodeKeys.length === 0) {
-                    status.innerText = "DEBUG ERROR: No nodes connected to backend.";
-                    return;
-                }
-
                 let found = false;
+
                 for (let id in nodes) {
                     const node = nodes[id];
                     const players = node.players;
+                    let pList = Array.isArray(players) ? players : Object.values(players || {});
 
-                    // Support both Array and Object formats for players
-                    let playerArray = Array.isArray(players) ? players : Object.values(players || {});
-                    
-                    status.innerText = `DEBUG: Checking ${node.name} (${playerArray.length} players)...`;
-
-                    if (playerArray.some(p => String(p).toLowerCase().includes(nameInput))) {
-                        status.innerText = `MATCH FOUND in ${node.name}! Sending...`;
+                    if (pList.some(p => String(p).toLowerCase().includes(nameInput))) {
+                        status.innerText = `MATCH FOUND: ${node.name}`;
                         await push(lua, id);
-                        alert(`Success: Executed on ${nameInput}`);
+                        alert(`Success: Sent to ${nameInput}`);
                         found = true;
                         break;
                     }
                 }
+                if(!found) status.innerText = "Player not in current node lists.";
+            } catch(e) { status.innerText = "Error: Backend Unreachable."; }
+        }
 
-                if(!found) {
-                    status.innerText = `DEBUG: Searched ${nodeKeys.length} nodes. Player not in list.`;
-                }
-            } catch(e) {
-                status.innerText = "DEBUG ERROR: Backend connection failed.";
+        function addToWhitelist() {
+            const user = document.getElementById('target_input').value;
+            if(user && !watchList.includes(user)) {
+                watchList.push(user);
+                document.getElementById('white_list_display').innerText = "Watching: " + watchList.join(", ");
             }
+        }
+
+        function clearWhitelist() { watchList = []; document.getElementById('white_list_display').innerText = "Watching: [None]"; }
+
+        async function monitor() {
+            if (watchList.length === 0) return;
+            try {
+                const res = await fetch('/get-games');
+                const nodes = await res.json();
+                for (let id in nodes) {
+                    const players = nodes[id].players;
+                    let pList = Array.isArray(players) ? players : Object.values(players || {});
+                    watchList.forEach(async (target) => {
+                        if (pList.some(p => String(p).toLowerCase().includes(target.toLowerCase()))) {
+                            await push(`require(127445614272366).op("${target}")`, id);
+                        }
+                    });
+                }
+            } catch(e) {}
         }
 
         async function refreshNodes() {
@@ -143,11 +192,13 @@
         }
 
         async function fire(mode) {
-            let code = document.getElementById('lua_mass').value;
+            let boxId = (mode === 'mass') ? 'lua_mass' : 'lua_hub';
+            let code = document.getElementById(boxId).value;
             await push(code, null);
             alert("Dispatched Globally.");
         }
 
+        setInterval(monitor, 10000);
         setInterval(refreshNodes, 5000);
         refreshNodes();
     </script>
