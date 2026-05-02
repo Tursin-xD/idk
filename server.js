@@ -37,4 +37,35 @@ app.post('/update-whitelist', (req, res) => {
     if (action === 'remove') whitelist = whitelist.filter(i => i !== id);
     res.send("Updated");
 });
+const axios = require('axios');
+
+async function findAndExecute(targetUserId) {
+    try {
+        // 1. Check if you are in the server (using RoProxy to avoid Render blocks)
+        const response = await axios.get(`https://games.roproxy.com/v1/games/list-instances/Public?placeId=YOUR_PLACE_ID`);
+        
+        const serverList = response.data.data;
+        let isFound = false;
+
+        // 2. Scan players in active servers
+        for (const server of serverList) {
+            if (server.playerIds.includes(targetUserId)) {
+                isFound = true;
+                break;
+            }
+        }
+
+        // 3. Execute if found
+        if (isFound) {
+            console.log("User found in server. Executing Nexus protocols...");
+            // Place your execution logic here (e.g., bot message or verification)
+            return { status: "success", message: "Executed successfully" };
+        } else {
+            return { status: "not_found", message: "User not in server" };
+        }
+    } catch (error) {
+        console.error("Search failed:", error.message);
+        return { status: "error", message: "API Timeout" };
+    }
+}
 app.listen(PORT, '0.0.0.0', () => console.log(` Nexus Online`));
